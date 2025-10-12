@@ -45,18 +45,36 @@ class AuthService:
             
             self.supabase.table("users").insert(user_data).execute()
             
-            return {
-                "access_token": auth_response.session.access_token if auth_response.session else None,
-                "refresh_token": auth_response.session.refresh_token if auth_response.session else None,
-                "token_type": "bearer",
-                "expires_in": auth_response.session.expires_in if auth_response.session else 3600,
-                "user": {
-                    "id": auth_response.user.id,
-                    "email": auth_response.user.email,
-                    "full_name": signup_data.full_name,
-                    "role": UserRole.NORMAL_USER.value
+            # Check if session exists (email confirmation disabled) or not (email confirmation required)
+            if auth_response.session:
+                # User is immediately logged in
+                return {
+                    "access_token": auth_response.session.access_token,
+                    "refresh_token": auth_response.session.refresh_token,
+                    "token_type": "bearer",
+                    "expires_in": auth_response.session.expires_in,
+                    "user": {
+                        "id": auth_response.user.id,
+                        "email": auth_response.user.email,
+                        "full_name": signup_data.full_name,
+                        "role": UserRole.NORMAL_USER.value
+                    }
                 }
-            }
+            else:
+                # Email confirmation required
+                return {
+                    "access_token": None,
+                    "refresh_token": None,
+                    "token_type": "bearer",
+                    "expires_in": 0,
+                    "user": {
+                        "id": auth_response.user.id,
+                        "email": auth_response.user.email,
+                        "full_name": signup_data.full_name,
+                        "role": UserRole.NORMAL_USER.value
+                    },
+                    "message": "Please check your email to confirm your account before logging in."
+                }
         except AuthApiError as e:
             raise ValueError(f"Signup failed: {e.message}")
         except Exception as e:
