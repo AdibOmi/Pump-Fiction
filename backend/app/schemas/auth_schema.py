@@ -33,11 +33,12 @@ class LoginRequest(BaseModel):
 
 
 class TokenResponse(BaseModel):
-    access_token: str
-    refresh_token: str
+    access_token: Optional[str] = None
+    refresh_token: Optional[str] = None
     token_type: str = "bearer"
     expires_in: int
     user: dict
+    message: Optional[str] = None  # For email confirmation messages
 
 
 class RefreshTokenRequest(BaseModel):

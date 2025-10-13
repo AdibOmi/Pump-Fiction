@@ -14,26 +14,7 @@ async def _get_user_service(db: AsyncSession = Depends(get_db)):
     return UserService(repo)
 
 
-# ========== DEPRECATED - Use /auth/signup and /auth/login instead ==========
-# These endpoints are kept for backward compatibility but should not be used
 
-@router.post('/register', response_model=UserRead, deprecated=True)
-async def register(user_in: UserCreate, service: UserService = Depends(_get_user_service)):
-    """DEPRECATED: Use /auth/signup instead"""
-    existing = await service.repository.get_by_email(user_in.email)
-    if existing:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Email already registered')
-    user = await service.register(user_in)
-    return user
-
-
-@router.post('/login', deprecated=True)
-async def login(user_in: UserCreate, service: UserService = Depends(_get_user_service)):
-    """DEPRECATED: Use /auth/login instead"""
-    token = await service.authenticate(user_in.email, user_in.password)
-    if not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid credentials')
-    return token
 
 
 # ========== Protected Endpoints Examples ==========
