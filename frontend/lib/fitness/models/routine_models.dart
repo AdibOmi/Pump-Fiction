@@ -23,7 +23,7 @@ class Exercise {
 }
 
 class DayPlan {
-  final String label; // e.g., Sat, Sun, Day 1, Day 2
+  final String label;
   final List<Exercise> exercises;
 
   DayPlan({required this.label, required List<Exercise> exercises})
@@ -41,22 +41,27 @@ class DayPlan {
 }
 
 class RoutinePlan {
+  final String id;                    // 👈 new
   final String title;
   final PlanMode mode;
   final List<DayPlan> dayPlans;
 
   RoutinePlan({
+    String? id,                        // 👈 new (optional)
     required this.title,
     required this.mode,
     required List<DayPlan> dayPlans,
-  }) : dayPlans = List.of(dayPlans);
+  })  : id = id ?? DateTime.now().microsecondsSinceEpoch.toString(),
+        dayPlans = List.of(dayPlans);
 
   RoutinePlan copyWith({
+    String? id,
     String? title,
     PlanMode? mode,
     List<DayPlan>? dayPlans,
   }) =>
       RoutinePlan(
+        id: id ?? this.id,
         title: title ?? this.title,
         mode: mode ?? this.mode,
         dayPlans: dayPlans ?? List.of(this.dayPlans),
@@ -65,7 +70,6 @@ class RoutinePlan {
   String prettyPrint() {
     final buffer = StringBuffer();
     buffer.writeln('Title: $title');
-    buffer.writeln('Mode: ${describeEnum(mode)}');
     for (final day in dayPlans.where((d) => d.exercises.isNotEmpty)) {
       buffer.writeln('- ${day.label}');
       for (final ex in day.exercises) {
