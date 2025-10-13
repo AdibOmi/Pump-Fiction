@@ -9,9 +9,16 @@ class SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => item.page),
-      ),
+      onTap: () async {
+  try {
+    await Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(builder: (_) => item.page),
+    );
+  } catch (e, st) {
+    debugPrint('Navigation error: $e\n$st');
+  }
+},
+
       child: Ink(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),

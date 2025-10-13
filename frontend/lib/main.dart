@@ -15,23 +15,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const bool debugSkipAuth = true; // <-- set to false when re-enabling auth
+    const bool debugSkipAuth = true; // flip to false when done
 
     return MaterialApp.router(
-      routerConfig: appRouter, // keep your existing router
+      routerConfig: appRouter,
       title: 'Pump Fiction',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-
-      // Wrap/override routed content during development
       builder: (context, child) {
         if (debugSkipAuth) {
-          return const FitnessHubScreen(); // <-- bypass login/signup
+          // Provide a Navigator so push() works
+          return Navigator(
+            onGenerateRoute: (_) =>
+                MaterialPageRoute(builder: (_) => const FitnessHubScreen()),
+          );
         }
-// normal routed content
+        return child ?? const SizedBox.shrink();
       },
     );
   }
