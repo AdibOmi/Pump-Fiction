@@ -178,6 +178,7 @@ This is the SINGLE SOURCE OF TRUTH for all technology decisions.
 | **CI/CD** | GitHub Actions | N/A | Automated testing and deployment | Free for public repos, Flutter/Python workflows available, integrates with Railway/Render |
 | **Monitoring** | Sentry | SaaS | Error tracking and performance monitoring | Frontend and backend error capture, release tracking, performance traces |
 | **Logging** | Python logging + Supabase Logs | Built-in | Application logs and debugging | Structured logging with JSON formatting, Supabase dashboard for query logs |
+| **AI/ML** | Google Gemini 1.5 | API (Phase 1) | AI chatbot for fitness Q&A | 1M token context window, built-in safety filters, cost-effective ($0.00035/1K tokens for Flash), multimodal support |
 | **CSS Framework** | N/A (Flutter Themes) | Built-in | Styling and theming | Flutter uses ThemeData for app-wide styling, not CSS-based |
 
 **Additional Key Dependencies:**
@@ -201,6 +202,8 @@ This is the SINGLE SOURCE OF TRUTH for all technology decisions.
 - `celery[redis]: ^5.3.0` - Background task queue for ML predictions and notifications
 - `httpx: ^0.26.0` - Async HTTP client for external APIs
 - `uvicorn[standard]: ^0.25.0` - ASGI server for FastAPI
+- `google-generativeai: ^0.3.0` - Google Gemini AI SDK for chatbot (Phase 1)
+- `pgvector: ^0.2.0` - PostgreSQL vector extension client for embeddings
 
 ---
 
@@ -216,6 +219,7 @@ These are the core business entities shared conceptually between frontend and ba
 - `id`: UUID - Supabase Auth user ID (primary key)
 - `email`: String - Unique email address for authentication
 - `full_name`: String - Display name
+- `phone_number`: String? - Optional phone number for contact/notifications
 - `role`: Enum (normal_user, trainer, seller, admin) - Access control level
 - `created_at`: DateTime - Account creation timestamp
 - `updated_at`: DateTime - Last profile modification
@@ -234,6 +238,7 @@ interface User {
   id: string;
   email: string;
   full_name: string;
+  phone_number?: string;
   role: UserRole;
   created_at: string; // ISO 8601
   updated_at: string;
@@ -606,6 +611,185 @@ interface RoleApplication {
 
 ---
 
+### Conversation (Phase 2: Trainer-Client Messaging)
+
+**Purpose:** Chat conversation thread between trainer and client (FR31)
+
+**Key Attributes:**
+- `id`: UUID - Primary key
+- `trainer_id`: UUID - Foreign key to User (must have trainer role)
+- `client_id`: UUID - Foreign key to User
+- `last_message_at`: DateTime - Timestamp of most recent message (for sorting)
+- `last_message_preview`: String? - Truncated preview of last message (max 100 chars)
+- `unread_count_trainer`: Integer - Unread messages count for trainer
+- `unread_count_client`: Integer - Unread messages count for client
+- `is_archived`: Boolean - Whether conversation is archived
+- `created_at`: DateTime - When conversation started
+
+#### TypeScript Interface
+
+```typescript
+interface Conversation {
+  id: string;
+  trainer_id: string;
+  client_id: string;
+  last_message_at: string;
+  last_message_preview?: string;
+  unread_count_trainer: number;
+  unread_count_client: number;
+  is_archived: boolean;
+  created_at: string;
+}
+```
+
+#### Relationships
+
+- Belongs to one `User` as trainer
+- Belongs to one `User` as client
+- Has many `Message` records
+
+---
+
+### Message (Phase 2: Trainer-Client Messaging)
+
+**Purpose:** Individual message within a conversation (FR31)
+
+**Key Attributes:**
+- `id`: UUID - Primary key
+- `conversation_id`: UUID - Foreign key to Conversation
+- `sender_id`: UUID - Foreign key to User (either trainer or client)
+- `content`: String - Message text content (max 5000 chars)
+- `message_type`: Enum (text, video_feedback, system) - Type of message
+- `video_url`: String? - Supabase Storage URL if message_type is video_feedback
+- `video_thumbnail_url`: String? - Thumbnail for video messages
+- `is_read`: Boolean - Whether message has been read by recipient
+- `read_at`: DateTime? - When message was read
+- `created_at`: DateTime - When message was sent
+- `edited_at`: DateTime? - If message was edited
+
+#### TypeScript Interface
+
+```typescript
+enum MessageType {
+  TEXT = 'text',
+  VIDEO_FEEDBACK = 'video_feedback',
+  SYSTEM = 'system'
+}
+
+interface Message {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  content: string;
+  message_type: MessageType;
+  video_url?: string;
+  video_thumbnail_url?: string;
+  is_read: boolean;
+  read_at?: string;
+  created_at: string;
+  edited_at?: string;
+}
+```
+
+#### Relationships
+
+- Belongs to one `Conversation`
+- Belongs to one `User` as sender
+
+---
+
+### AIChatSession (Phase 1: AI Chatbot)
+
+**Purpose:** AI chatbot conversation session for fitness Q&A (FR25-FR26)
+
+**Key Attributes:**
+- `id`: UUID - Primary key
+- `user_id`: UUID - Foreign key to User
+- `title`: String - Auto-generated session title from first message (e.g., "Bench Press Form Tips")
+- `context_snapshot`: JSON - Serialized user context at session start (recent workouts, nutrition, goals)
+- `last_message_at`: DateTime - Most recent message timestamp
+- `is_archived`: Boolean - Whether session is archived
+- `created_at`: DateTime - Session start time
+
+#### TypeScript Interface
+
+```typescript
+interface AIChatSession {
+  id: string;
+  user_id: string;
+  title: string;
+  context_snapshot: {
+    recent_workouts?: any[];
+    nutrition_summary?: any;
+    current_goals?: any;
+  };
+  last_message_at: string;
+  is_archived: boolean;
+  created_at: string;
+}
+```
+
+#### Relationships
+
+- Belongs to one `User`
+- Has many `AIChatMessage` records
+
+---
+
+### AIChatMessage (Phase 1: AI Chatbot)
+
+**Purpose:** Individual message in AI chatbot conversation (FR25-FR26)
+
+**Key Attributes:**
+- `id`: UUID - Primary key
+- `session_id`: UUID - Foreign key to AIChatSession
+- `role`: Enum (user, assistant, system) - Message sender
+- `content`: String - Message text content
+- `citations`: Array<Object>? - Source citations for assistant responses
+  - `source_type`: String (workout_history, nutrition_data, knowledge_base)
+  - `source_id`: String - Reference ID
+  - `excerpt`: String - Quoted text from source
+- `tokens_used`: Integer? - Token count for assistant responses (cost tracking)
+- `model_version`: String? - Gemini model used (e.g., "gemini-1.5-flash", "gemini-1.5-pro")
+- `safety_flag`: Boolean - Whether response triggered safety warning
+- `disclaimer_shown`: Boolean - Whether medical disclaimer was displayed
+- `created_at`: DateTime - Message timestamp
+
+#### TypeScript Interface
+
+```typescript
+enum ChatRole {
+  USER = 'user',
+  ASSISTANT = 'assistant',
+  SYSTEM = 'system'
+}
+
+interface Citation {
+  source_type: 'workout_history' | 'nutrition_data' | 'knowledge_base';
+  source_id: string;
+  excerpt: string;
+}
+
+interface AIChatMessage {
+  id: string;
+  session_id: string;
+  role: ChatRole;
+  content: string;
+  citations?: Citation[];
+  tokens_used?: number;
+  model_version?: string;
+  safety_flag: boolean;
+  disclaimer_shown: boolean;
+  created_at: string;
+}
+```
+
+#### Relationships
+
+- Belongs to one `AIChatSession`
+
+---
+
 ## API Specification
 
 REST API with OpenAPI 3.0 specification covering Phase 0 MVP endpoints.
@@ -696,6 +880,178 @@ paths:
   /body-metrics:
     post:
       summary: Log body metrics (FR14-FR15)
+
+  # ============================================
+  # PHASE 1: AI CHATBOT ENDPOINTS (FR25-FR26)
+  # ============================================
+
+  /ai-chat/sessions:
+    post:
+      summary: Start new AI chat session (FR25)
+      description: Creates session with user context snapshot
+      security:
+        - BearerAuth: []
+      responses:
+        '201':
+          description: Session created with initial context
+    get:
+      summary: List user's chat sessions
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: is_archived
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Array of chat sessions
+
+  /ai-chat/sessions/{session_id}:
+    get:
+      summary: Get chat session details with messages
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Session with full message history
+    delete:
+      summary: Archive chat session
+      security:
+        - BearerAuth: []
+
+  /ai-chat/sessions/{session_id}/messages:
+    post:
+      summary: Send message to AI chatbot (FR25)
+      description: |
+        User sends question, AI responds with RAG-based answer including:
+        - Context from user's workout/nutrition history
+        - Citations from fitness knowledge base
+        - Safety disclaimers for injury/medical queries
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  maxLength: 1000
+      responses:
+        '201':
+          description: User message saved + AI response generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_message:
+                    $ref: '#/components/schemas/AIChatMessage'
+                  assistant_message:
+                    $ref: '#/components/schemas/AIChatMessage'
+
+  # ============================================
+  # PHASE 2: TRAINER-CLIENT MESSAGING (FR31)
+  # ============================================
+
+  /conversations:
+    get:
+      summary: Get user's conversations (trainer or client view)
+      description: Returns conversations with unread counts and preview
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [trainer, client]
+        - name: is_archived
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Array of conversations
+
+  /conversations/{conversation_id}:
+    get:
+      summary: Get conversation details with messages
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: before
+          in: query
+          description: Message ID for pagination
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Conversation with paginated messages
+
+  /conversations/{conversation_id}/messages:
+    post:
+      summary: Send message in conversation (FR31)
+      description: Supports text and video feedback uploads
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                message_type:
+                  type: string
+                  enum: [text, video_feedback]
+                video_url:
+                  type: string
+      responses:
+        '201':
+          description: Message sent successfully
+
+  /conversations/{conversation_id}/messages/{message_id}/read:
+    post:
+      summary: Mark message as read
+      description: Updates is_read and read_at, decrements unread count
+      security:
+        - BearerAuth: []
+
+  /conversations/{conversation_id}/upload-video:
+    post:
+      summary: Upload video feedback file (FR31)
+      description: Trainer uploads video to Supabase Storage, returns URL
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                video:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Video uploaded, returns Supabase Storage URL
+
+  # ============================================
+  # WEBSOCKET / REALTIME (Phase 2)
+  # ============================================
+
+  # Note: Real-time message delivery uses Supabase Realtime subscriptions
+  # WebSocket connection: wss://[project].supabase.co/realtime/v1
+  # Clients subscribe to: postgres_changes:conversations:id=eq.{conversation_id}
 ```
 
 **Full API specification with complete request/response schemas is available in the codebase at: `docs/api/openapi.yaml`**
@@ -829,6 +1185,12 @@ app/
 
 **Open Food Facts API** - Nutrition database proxy with Redis caching (24-hour TTL)
 
+**AI Chat Service (Phase 1)** - RAG-based chatbot using Google Gemini 1.5 Flash with pgvector embeddings for context retrieval. Implements safety guardrails and citation system for fitness Q&A. Uses Gemini's long context window (1M tokens) for comprehensive workout history analysis.
+
+**Messaging Service (Phase 2)** - Real-time trainer-client messaging via Supabase Realtime with WebSocket connections. Handles text messages, video feedback uploads, and read receipts.
+
+**Supabase Realtime (Phase 2)** - WebSocket server for real-time message delivery with PostgreSQL change data capture (CDC). Enables instant message updates without polling.
+
 ---
 
 ### Component Diagram
@@ -855,10 +1217,16 @@ graph TB
         Redis[(Redis Cloud<br/>Cache & Queue)]
         FCM[Firebase FCM<br/>Push Notifications]
         OpenFood[Open Food Facts<br/>Nutrition API]
+        Gemini[Google Gemini 1.5<br/>AI Chat]
         Sentry[Sentry<br/>Error Tracking]
     end
 
+    subgraph "Real-time Services (Phase 2)"
+        SupaRealtime[Supabase Realtime<br/>WebSocket]
+    end
+
     FlutterApp -->|REST API| FastAPI
+    FlutterApp -->|WebSocket Chat| SupaRealtime
     FlutterApp -->|Offline First| SQLite
     FlutterApp -->|Receive Notifications| FCM
     FlutterApp -->|Log Errors| Sentry
@@ -870,6 +1238,7 @@ graph TB
     FastAPI -->|Queue Tasks| Celery
     FastAPI -->|Send Notifications| FCM
     FastAPI -->|Proxy Requests| OpenFood
+    FastAPI -->|AI Chat Requests| Gemini
     FastAPI -->|Log Errors| Sentry
 
     Celery -->|Consume Queue| Redis
@@ -877,11 +1246,14 @@ graph TB
     Celery -->|Send Notifications| FCM
 
     SupaAuth -->|Store Users| SupaDB
+    SupaRealtime -->|PostgreSQL CDC| SupaDB
 
     style FlutterApp fill:#4DB6AC
     style FastAPI fill:#FF6F00
     style SupaDB fill:#3FCF8E
     style Redis fill:#DC382D
+    style Gemini fill:#4285F4
+    style SupaRealtime fill:#3FCF8E
 ```
 
 ---
@@ -987,6 +1359,86 @@ sequenceDiagram
     FlutterApp-->>FlutterApp: Display PR badge on set
 ```
 
+### Workflow 4: AI Chatbot Interaction (Phase 1)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant FlutterApp
+    participant FastAPI
+    participant AIChatService
+    participant PostgreSQL
+    participant Gemini
+    participant pgvector
+
+    User->>FlutterApp: Enter question: "How to improve my bench press?"
+    FlutterApp->>FastAPI: POST /ai-chat/sessions/{id}/messages
+
+    FastAPI->>AIChatService: process_user_message(session_id, question)
+    
+    AIChatService->>PostgreSQL: Get user context (recent workouts, nutrition, goals)
+    PostgreSQL-->>AIChatService: User data snapshot
+    
+    AIChatService->>pgvector: Semantic search for relevant content<br/>Query: "bench press technique improvement"
+    pgvector-->>AIChatService: Top 5 relevant articles with embeddings
+    
+    AIChatService->>AIChatService: Build RAG context:<br/>- User's bench press history<br/>- Retrieved articles
+    
+    AIChatService->>Gemini: Generate response with Gemini 1.5 Flash<br/>System: fitness expert, Context: user data + articles<br/>Uses 1M token context window
+    Gemini-->>AIChatService: AI response with recommendations
+    
+    AIChatService->>AIChatService: Extract citations from context<br/>Add medical disclaimer if needed
+    
+    AIChatService->>PostgreSQL: INSERT user message + assistant response
+    
+    AIChatService-->>FastAPI: Response with citations
+    FastAPI-->>FlutterApp: 201 Created {user_message, assistant_message}
+    
+    FlutterApp->>FlutterApp: Display response with citation links
+    FlutterApp-->>User: Show AI answer with sources
+    
+    Note over AIChatService,Gemini: Safety: Gemini built-in safety filters + custom medical query detection<br/>Cost: ~$0.00035/1K tokens (Flash model)
+```
+
+### Workflow 5: Trainer-Client Messaging (Phase 2)
+
+```mermaid
+sequenceDiagram
+    participant Trainer
+    participant TrainerApp
+    participant FastAPI
+    participant SupabaseRealtime
+    participant PostgreSQL
+    participant ClientApp
+    participant Client
+
+    Note over Trainer,Client: Trainer reviews client's workout progress
+
+    Trainer->>TrainerApp: Record video feedback on client's form
+    TrainerApp->>FastAPI: POST /conversations/{id}/upload-video
+    FastAPI->>PostgreSQL: Upload to Supabase Storage
+    PostgreSQL-->>FastAPI: Video URL + thumbnail
+    
+    TrainerApp->>FastAPI: POST /conversations/{id}/messages<br/>{type: video_feedback, video_url, content: "Great depth!"}
+    FastAPI->>PostgreSQL: INSERT message (sender: trainer)
+    FastAPI->>PostgreSQL: UPDATE conversation (last_message_at, unread_count_client++)
+    
+    Note over FastAPI,SupabaseRealtime: PostgreSQL triggers change event
+    
+    SupabaseRealtime->>ClientApp: WebSocket: new_message event
+    ClientApp->>ClientApp: Update chat UI with new video message
+    ClientApp->>Client: Show notification: "New feedback from trainer"
+    
+    Client->>ClientApp: Open conversation, play video
+    ClientApp->>FastAPI: POST /conversations/{id}/messages/{msg_id}/read
+    FastAPI->>PostgreSQL: UPDATE message (is_read: true, read_at: now)<br/>UPDATE conversation (unread_count_client--)
+    
+    SupabaseRealtime->>TrainerApp: WebSocket: message_read event
+    TrainerApp->>TrainerApp: Show "Read" indicator on message
+    
+    Note over Trainer,Client: Real-time two-way communication maintained
+```
+
 ---
 
 ## Database Schema
@@ -1044,6 +1496,7 @@ CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     email VARCHAR(255) UNIQUE NOT NULL,
     full_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20),
     role user_role_enum NOT NULL DEFAULT 'normal_user',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -1171,6 +1624,78 @@ CREATE TABLE role_applications (
 );
 
 -- =====================================================
+-- PHASE 1: AI CHATBOT TABLES
+-- =====================================================
+
+CREATE TYPE chat_role_enum AS ENUM (
+    'user', 'assistant', 'system'
+);
+
+CREATE TABLE ai_chat_sessions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    context_snapshot JSONB NOT NULL DEFAULT '{}',
+    last_message_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE ai_chat_messages (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    session_id UUID NOT NULL REFERENCES ai_chat_sessions(id) ON DELETE CASCADE,
+    role chat_role_enum NOT NULL,
+    content TEXT NOT NULL,
+    citations JSONB DEFAULT '[]',
+    tokens_used INTEGER,
+    model_version VARCHAR(50),
+    safety_flag BOOLEAN NOT NULL DEFAULT FALSE,
+    disclaimer_shown BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- =====================================================
+-- PHASE 2: TRAINER-CLIENT MESSAGING TABLES
+-- =====================================================
+
+CREATE TYPE message_type_enum AS ENUM (
+    'text', 'video_feedback', 'system'
+);
+
+CREATE TABLE conversations (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    trainer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    client_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    last_message_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    last_message_preview VARCHAR(100),
+    unread_count_trainer INTEGER NOT NULL DEFAULT 0,
+    unread_count_client INTEGER NOT NULL DEFAULT 0,
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT unique_trainer_client_conversation UNIQUE (trainer_id, client_id),
+    CONSTRAINT valid_unread_counts CHECK (
+        unread_count_trainer >= 0 AND unread_count_client >= 0
+    )
+);
+
+CREATE TABLE messages (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    sender_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL CHECK (LENGTH(content) <= 5000),
+    message_type message_type_enum NOT NULL DEFAULT 'text',
+    video_url VARCHAR(512),
+    video_thumbnail_url VARCHAR(512),
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    read_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    edited_at TIMESTAMPTZ,
+    deleted_at TIMESTAMPTZ
+);
+
+-- =====================================================
 -- INDEXES FOR PERFORMANCE
 -- =====================================================
 
@@ -1179,6 +1704,14 @@ CREATE INDEX idx_workouts_user_date ON workouts(user_id, started_at DESC) WHERE 
 CREATE INDEX idx_nutrition_logs_user_date ON nutrition_logs(user_id, date DESC) WHERE deleted_at IS NULL;
 CREATE INDEX idx_body_metrics_user_date ON body_metrics(user_id, date DESC);
 CREATE INDEX idx_exercises_name_trgm ON exercises USING gin (name gin_trgm_ops);
+
+-- Chat indexes (Phase 1-2)
+CREATE INDEX idx_ai_chat_sessions_user_date ON ai_chat_sessions(user_id, last_message_at DESC) WHERE NOT is_archived;
+CREATE INDEX idx_ai_chat_messages_session ON ai_chat_messages(session_id, created_at DESC);
+CREATE INDEX idx_conversations_trainer ON conversations(trainer_id, last_message_at DESC) WHERE NOT is_archived;
+CREATE INDEX idx_conversations_client ON conversations(client_id, last_message_at DESC) WHERE NOT is_archived;
+CREATE INDEX idx_messages_conversation_date ON messages(conversation_id, created_at DESC) WHERE deleted_at IS NULL;
+CREATE INDEX idx_messages_unread ON messages(conversation_id, is_read) WHERE NOT is_read AND deleted_at IS NULL;
 
 -- =====================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
@@ -1193,6 +1726,46 @@ CREATE POLICY workouts_user_isolation ON workouts
     FOR ALL
     USING (auth.uid() = user_id)
     WITH CHECK (auth.uid() = user_id);
+
+-- Chat RLS policies (Phase 1-2)
+ALTER TABLE ai_chat_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_chat_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+
+-- AI Chat: Users can only access their own sessions
+CREATE POLICY ai_chat_sessions_user_isolation ON ai_chat_sessions
+    FOR ALL
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY ai_chat_messages_via_session ON ai_chat_messages
+    FOR ALL
+    USING (EXISTS (
+        SELECT 1 FROM ai_chat_sessions 
+        WHERE id = ai_chat_messages.session_id 
+        AND user_id = auth.uid()
+    ));
+
+-- Conversations: Users can only see conversations they're part of
+CREATE POLICY conversations_participant_access ON conversations
+    FOR ALL
+    USING (auth.uid() = trainer_id OR auth.uid() = client_id)
+    WITH CHECK (auth.uid() = trainer_id OR auth.uid() = client_id);
+
+-- Messages: Users can only see messages in their conversations
+CREATE POLICY messages_via_conversation ON messages
+    FOR ALL
+    USING (EXISTS (
+        SELECT 1 FROM conversations 
+        WHERE id = messages.conversation_id 
+        AND (trainer_id = auth.uid() OR client_id = auth.uid())
+    ))
+    WITH CHECK (EXISTS (
+        SELECT 1 FROM conversations 
+        WHERE id = messages.conversation_id 
+        AND (trainer_id = auth.uid() OR client_id = auth.uid())
+    ));
 ```
 
 **Full database schema with all triggers, seed data, and comments is available in: `backend/alembic/versions/`**
@@ -1212,22 +1785,44 @@ lib/
 │   ├── error/             # Failure classes
 │   ├── network/           # Dio client with interceptors
 │   ├── router/            # Go Router configuration
+│   ├── realtime/          # Supabase Realtime client (Phase 2)
 │   └── widgets/           # Reusable UI components
 ├── features/
-│   └── {feature}/
+│   ├── authentication/
+│   │   └── [data|domain|presentation]/
+│   ├── workouts/
+│   │   └── [data|domain|presentation]/
+│   ├── nutrition/
+│   │   └── [data|domain|presentation]/
+│   ├── profile/
+│   │   └── [data|domain|presentation]/
+│   ├── ai_chat/           # Phase 1: AI Chatbot
+│   │   ├── data/
+│   │   │   ├── models/           # AIChatSessionModel, AIChatMessageModel
+│   │   │   ├── datasources/      # AI chat remote API
+│   │   │   └── repositories/     # AIChatRepository implementation
+│   │   ├── domain/
+│   │   │   ├── entities/         # AIChatSession, AIChatMessage
+│   │   │   ├── repositories/     # AIChatRepository interface
+│   │   │   └── usecases/         # SendMessageUseCase, GetSessionsUseCase
+│   │   └── presentation/
+│   │       ├── providers/        # AIChatSessionProvider
+│   │       ├── pages/            # AIChatPage, SessionListPage
+│   │       └── widgets/          # MessageBubble, CitationCard
+│   └── messaging/         # Phase 2: Trainer-Client Chat
 │       ├── data/
-│       │   ├── models/             # JSON serialization
-│       │   ├── datasources/        # Remote & Local data sources
-│       │   └── repositories/       # Repository implementation
+│       │   ├── models/           # ConversationModel, MessageModel
+│       │   ├── datasources/      # Messaging API + Realtime subscriptions
+│       │   └── repositories/     # MessagingRepository implementation
 │       ├── domain/
-│       │   ├── entities/           # Pure business objects
-│       │   ├── repositories/       # Repository interfaces
-│       │   └── usecases/           # Single-responsibility use cases
+│       │   ├── entities/         # Conversation, Message
+│       │   ├── repositories/     # MessagingRepository interface
+│       │   └── usecases/         # SendMessageUseCase, UploadVideoUseCase
 │       └── presentation/
-│           ├── providers/          # Riverpod state management
-│           ├── pages/              # Full screen widgets
-│           └── widgets/            # Feature-specific widgets
-└── injection_container.dart        # GetIt dependency injection
+│           ├── providers/        # ConversationProvider, RealtimeMessageProvider
+│           ├── pages/            # ConversationListPage, ChatPage
+│           └── widgets/          # MessageBubble, VideoPlayer, TypingIndicator
+└── injection_container.dart       # GetIt DI setup
 ```
 
 ### State Management
