@@ -25,6 +25,7 @@ class SignupRequest(BaseModel):
     email: EmailStr
     password: str
     full_name: str
+    phone_number: Optional[str] = None
 
 
 class LoginRequest(BaseModel):
@@ -53,12 +54,14 @@ class UserProfile(BaseModel):
     id: str
     email: str
     full_name: str
+    phone_number: Optional[str] = None
     role: UserRole
     created_at: Optional[datetime] = None
 
 
 class UpdateProfileRequest(BaseModel):
     full_name: Optional[str] = None
+    phone_number: Optional[str] = None
 
 
 # ========== Role Application Schemas ==========
