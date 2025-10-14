@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pump_fiction/features/authentication/presentation/pages/login_page.dart';
 import 'injection_container.dart' as di;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router/app_router.dart';
+import 'features/authentication/presentation/pages/login_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +19,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: appRouter,
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Pump Fiction',
+      
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -37,6 +41,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
   // home is replaced by router
+      //home: const LoginPage(),
     );
   }
 }
