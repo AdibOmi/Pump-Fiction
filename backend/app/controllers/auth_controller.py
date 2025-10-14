@@ -100,6 +100,7 @@ async def get_current_user_profile(current_user: dict = Depends(get_current_acti
         id=current_user["id"],
         email=current_user["email"],
         full_name=current_user["full_name"],
+        phone_number=current_user.get("phone_number"),
         role=UserRole(current_user["role"]),
         created_at=current_user.get("created_at")
     )
@@ -112,17 +113,30 @@ async def update_profile(
 ):
     """
     Update current user's profile
-    - Can update: full_name
+    - Can update: full_name, phone_number
     """
-    # This would need implementation in AuthService
-    # For now, returning current user
-    return UserProfile(
-        id=current_user["id"],
-        email=current_user["email"],
-        full_name=update_data.full_name or current_user["full_name"],
-        role=UserRole(current_user["role"]),
-        created_at=current_user.get("created_at")
-    )
+    auth_service = AuthService()
+    
+    try:
+        updated_user = await auth_service.update_user_profile(
+            user_id=current_user["id"],
+            full_name=update_data.full_name,
+            phone_number=update_data.phone_number
+        )
+        
+        return UserProfile(
+            id=updated_user["id"],
+            email=updated_user["email"],
+            full_name=updated_user["full_name"],
+            phone_number=updated_user.get("phone_number"),
+            role=UserRole(updated_user["role"]),
+            created_at=updated_user.get("created_at")
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
 
 
 # ========== Role Application Endpoints ==========

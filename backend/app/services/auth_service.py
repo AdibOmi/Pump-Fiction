@@ -27,6 +27,7 @@ class AuthService:
                 "options": {
                     "data": {
                         "full_name": signup_data.full_name,
+                        "phone_number": signup_data.phone_number,
                         "role": UserRole.NORMAL_USER.value
                     }
                 }
@@ -40,23 +41,44 @@ class AuthService:
                 "id": auth_response.user.id,
                 "email": signup_data.email,
                 "full_name": signup_data.full_name,
+                "phone_number": signup_data.phone_number,
                 "role": UserRole.NORMAL_USER.value,
             }
             
             self.supabase.table("users").insert(user_data).execute()
             
-            return {
-                "access_token": auth_response.session.access_token if auth_response.session else None,
-                "refresh_token": auth_response.session.refresh_token if auth_response.session else None,
-                "token_type": "bearer",
-                "expires_in": auth_response.session.expires_in if auth_response.session else 3600,
-                "user": {
-                    "id": auth_response.user.id,
-                    "email": auth_response.user.email,
-                    "full_name": signup_data.full_name,
-                    "role": UserRole.NORMAL_USER.value
+            # Check if session exists (email confirmation disabled) or not (email confirmation required)
+            if auth_response.session:
+                # User is immediately logged in
+                return {
+                    "access_token": auth_response.session.access_token,
+                    "refresh_token": auth_response.session.refresh_token,
+                    "token_type": "bearer",
+                    "expires_in": auth_response.session.expires_in,
+                    "user": {
+                        "id": auth_response.user.id,
+                        "email": auth_response.user.email,
+                        "full_name": signup_data.full_name,
+                        "phone_number": signup_data.phone_number,
+                        "role": UserRole.NORMAL_USER.value
+                    }
                 }
-            }
+            else:
+                # Email confirmation required
+                return {
+                    "access_token": None,
+                    "refresh_token": None,
+                    "token_type": "bearer",
+                    "expires_in": 0,
+                    "user": {
+                        "id": auth_response.user.id,
+                        "email": auth_response.user.email,
+                        "full_name": signup_data.full_name,
+                        "phone_number": signup_data.phone_number,
+                        "role": UserRole.NORMAL_USER.value
+                    },
+                    "message": "Please check your email to confirm your account before logging in."
+                }
         except AuthApiError as e:
             raise ValueError(f"Signup failed: {e.message}")
         except Exception as e:
@@ -85,6 +107,7 @@ class AuthService:
                     "id": auth_response.user.id,
                     "email": auth_response.user.email,
                     "full_name": user_record.data.get("full_name"),
+                    "phone_number": user_record.data.get("phone_number"),
                     "role": user_record.data.get("role", UserRole.NORMAL_USER.value)
                 }
             }
@@ -113,6 +136,7 @@ class AuthService:
                     "id": auth_response.user.id,
                     "email": auth_response.user.email,
                     "full_name": user_record.data.get("full_name"),
+                    "phone_number": user_record.data.get("phone_number"),
                     "role": user_record.data.get("role", UserRole.NORMAL_USER.value)
                 }
             }
@@ -142,6 +166,7 @@ class AuthService:
                 "id": user.user.id,
                 "email": user.user.email,
                 "full_name": user_record.data.get("full_name"),
+                "phone_number": user_record.data.get("phone_number"),
                 "role": user_record.data.get("role", UserRole.NORMAL_USER.value),
                 "created_at": user_record.data.get("created_at")
             }
@@ -161,3 +186,38 @@ class AuthService:
             return True
         except Exception as e:
             raise ValueError(f"Failed to update user role: {str(e)}")
+    
+    async def update_user_profile(self, user_id: str, full_name: Optional[str] = None, phone_number: Optional[str] = None) -> Dict[str, Any]:
+        """Update user's profile information"""
+        try:
+            update_data = {}
+            if full_name is not None:
+                update_data["full_name"] = full_name
+            if phone_number is not None:
+                update_data["phone_number"] = phone_number
+            
+            if not update_data:
+                raise ValueError("No fields to update")
+            
+            # Update in public.users table
+            result = self.supabase.table("users").update(update_data).eq("id", user_id).execute()
+            
+            # Also update in auth metadata if full_name changed
+            if full_name is not None or phone_number is not None:
+                auth_metadata = {}
+                if full_name is not None:
+                    auth_metadata["full_name"] = full_name
+                if phone_number is not None:
+                    auth_metadata["phone_number"] = phone_number
+                
+                self.supabase.auth.admin.update_user_by_id(
+                    user_id,
+                    {"user_metadata": auth_metadata}
+                )
+            
+            if result.data and len(result.data) > 0:
+                return result.data[0]
+            else:
+                raise ValueError("User not found")
+        except Exception as e:
+            raise ValueError(f"Failed to update profile: {str(e)}")

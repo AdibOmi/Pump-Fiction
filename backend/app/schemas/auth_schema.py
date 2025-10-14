@@ -25,6 +25,7 @@ class SignupRequest(BaseModel):
     email: EmailStr
     password: str
     full_name: str
+    phone_number: Optional[str] = None
 
 
 class LoginRequest(BaseModel):
@@ -33,11 +34,12 @@ class LoginRequest(BaseModel):
 
 
 class TokenResponse(BaseModel):
-    access_token: str
-    refresh_token: str
+    access_token: Optional[str] = None
+    refresh_token: Optional[str] = None
     token_type: str = "bearer"
     expires_in: int
     user: dict
+    message: Optional[str] = None  # For email confirmation messages
 
 
 class RefreshTokenRequest(BaseModel):
@@ -52,12 +54,14 @@ class UserProfile(BaseModel):
     id: str
     email: str
     full_name: str
+    phone_number: Optional[str] = None
     role: UserRole
     created_at: Optional[datetime] = None
 
 
 class UpdateProfileRequest(BaseModel):
     full_name: Optional[str] = None
+    phone_number: Optional[str] = None
 
 
 # ========== Role Application Schemas ==========
