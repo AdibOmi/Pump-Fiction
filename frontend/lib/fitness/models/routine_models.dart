@@ -18,12 +18,20 @@ class Exercise {
   Map<String, dynamic> toJson() => {
         'name': name,
         'sets': sets,
-        'reps': '$minReps-$maxReps',
+        'minReps': minReps,
+        'maxReps': maxReps,
       };
+
+  factory Exercise.fromJson(Map<String, dynamic> j) => Exercise(
+        name: j['name'] as String,
+        sets: j['sets'] as int,
+        minReps: j['minReps'] as int,
+        maxReps: j['maxReps'] as int,
+      );
 }
 
 class DayPlan {
-  final String label;
+  final String label; // e.g., Sat / Day 1 / Push
   final List<Exercise> exercises;
 
   DayPlan({required this.label, required List<Exercise> exercises})
@@ -38,16 +46,23 @@ class DayPlan {
         'label': label,
         'exercises': exercises.map((e) => e.toJson()).toList(),
       };
+
+  factory DayPlan.fromJson(Map<String, dynamic> j) => DayPlan(
+        label: j['label'] as String,
+        exercises: (j['exercises'] as List<dynamic>)
+            .map((e) => Exercise.fromJson(e as Map<String, dynamic>))
+            .toList(),
+      );
 }
 
 class RoutinePlan {
-  final String id;                    // 👈 new
+  final String id;
   final String title;
   final PlanMode mode;
   final List<DayPlan> dayPlans;
 
   RoutinePlan({
-    String? id,                        // 👈 new (optional)
+    String? id,
     required this.title,
     required this.mode,
     required List<DayPlan> dayPlans,
@@ -65,6 +80,22 @@ class RoutinePlan {
         title: title ?? this.title,
         mode: mode ?? this.mode,
         dayPlans: dayPlans ?? List.of(this.dayPlans),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'mode': describeEnum(mode),
+        'dayPlans': dayPlans.map((d) => d.toJson()).toList(),
+      };
+
+  factory RoutinePlan.fromJson(Map<String, dynamic> j) => RoutinePlan(
+        id: j['id'] as String?,
+        title: j['title'] as String,
+        mode: (j['mode'] as String) == 'weekly' ? PlanMode.weekly : PlanMode.nDays,
+        dayPlans: (j['dayPlans'] as List<dynamic>)
+            .map((d) => DayPlan.fromJson(d as Map<String, dynamic>))
+            .toList(),
       );
 
   String prettyPrint() {
