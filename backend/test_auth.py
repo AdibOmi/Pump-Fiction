@@ -5,7 +5,7 @@ Demonstrates the complete authentication flow
 import requests
 import json
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "http://10.0.0.2:8000"
 
 
 def print_response(title, response):
