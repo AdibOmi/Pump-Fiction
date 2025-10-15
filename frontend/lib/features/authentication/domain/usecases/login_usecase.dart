@@ -5,7 +5,7 @@ class LoginUseCase {
   final AuthRepository repository;
   LoginUseCase(this.repository);
 
-  Future<UserModel> call(String email, String password) async {
-    return repository.login(email, password);
+  Future<TokenResponse> call(LoginRequest request) async {
+    return repository.login(request);
   }
 }

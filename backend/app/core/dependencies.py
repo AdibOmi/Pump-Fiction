@@ -1,11 +1,16 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
 from typing import Optional, List
 from ..services.auth_service import AuthService
 from ..schemas.auth_schema import UserRole
+from ..core.database import get_sync_db
 
 
 security = HTTPBearer()
+
+# Use the sync database session for dependencies
+get_db = get_sync_db
 
 
 async def get_current_user(
