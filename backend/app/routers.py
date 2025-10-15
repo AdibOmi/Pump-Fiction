@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .controllers import user_controller, auth_controller, ai_chat_controller
+from .controllers import user_controller, auth_controller, ai_chat_controller, post_controller
 
 router = APIRouter()
 
@@ -11,3 +11,6 @@ router.include_router(user_controller.router)
 
 # AI Chat routes (Phase 1 - AI Chatbot)
 router.include_router(ai_chat_controller.router)
+
+# Post routes (Social media posts)
+router.include_router(post_controller.router)
