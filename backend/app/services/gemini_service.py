@@ -3,6 +3,7 @@ Google Gemini AI Service
 Handles direct integration with Google's Generative AI API
 """
 from typing import Optional, Dict, Any
+import asyncio
 import google.generativeai as genai
 from ..core.config import settings
 
@@ -43,24 +44,25 @@ class GeminiService:
         ]
         
         # Initialize model
+        # Using gemini-2.0-flash-exp (latest available model)
         self.model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name="gemini-2.0-flash-exp",
             generation_config=self.generation_config,
             safety_settings=self.safety_settings
         )
     
     async def generate_response(
-        self, 
-        user_message: str, 
+        self,
+        user_message: str,
         system_prompt: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Generate AI response using Gemini
-        
+
         Args:
             user_message: User's input message
             system_prompt: Optional system instructions for context
-        
+
         Returns:
             Dict with response text, model version, and token usage
         """
@@ -70,33 +72,36 @@ class GeminiService:
                 prompt = f"{system_prompt}\n\nUser: {user_message}\n\nAssistant:"
             else:
                 prompt = user_message
-            
-            # Generate response
-            response = self.model.generate_content(prompt)
-            
+
+            # Generate response (run in executor to avoid blocking)
+            response = await asyncio.to_thread(
+                self.model.generate_content,
+                prompt
+            )
+
             # Extract response text
             response_text = response.text if response.text else ""
-            
+
             # Get token usage (if available)
             tokens_used = None
             if hasattr(response, 'usage_metadata'):
                 tokens_used = (
-                    response.usage_metadata.prompt_token_count + 
+                    response.usage_metadata.prompt_token_count +
                     response.usage_metadata.candidates_token_count
                 )
-            
+
             # Check for safety flags
             safety_flag = False
             if hasattr(response, 'prompt_feedback'):
                 safety_flag = response.prompt_feedback.block_reason is not None
-            
+
             return {
                 "response_text": response_text,
-                "model_version": "gemini-1.5-flash",
+                "model_version": "gemini-2.0-flash-exp",
                 "tokens_used": tokens_used,
                 "safety_flag": safety_flag
             }
-        
+
         except Exception as e:
             raise ValueError(f"Gemini API error: {str(e)}")
     

@@ -1,7 +1,8 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional, List
+from pydantic import BaseModel, ConfigDict, field_serializer, Field
+from typing import Optional, List, Union
 from enum import Enum
 from datetime import datetime
+from uuid import UUID
 
 
 class ChatRole(str, Enum):
@@ -34,10 +35,10 @@ class SendMessageRequest(BaseModel):
 
 class AIChatMessageResponse(BaseModel):
     """Individual chat message"""
-    model_config = ConfigDict(from_attributes=True)
-    
-    id: str
-    session_id: str
+    model_config = ConfigDict(from_attributes=True, protected_namespaces=())
+
+    id: Union[str, UUID]
+    session_id: Union[str, UUID]
     role: ChatRole
     content: str
     tokens_used: Optional[int] = None
@@ -46,32 +47,47 @@ class AIChatMessageResponse(BaseModel):
     disclaimer_shown: bool = False
     created_at: datetime
 
+    @field_serializer('id', 'session_id')
+    def serialize_uuid(self, value, _info):
+        """Convert UUID to string"""
+        return str(value) if value else None
+
 
 class AIChatSessionResponse(BaseModel):
     """AI chat session with metadata"""
     model_config = ConfigDict(from_attributes=True)
-    
-    id: str
-    user_id: str
+
+    id: Union[str, UUID]
+    user_id: Union[str, UUID]
     title: str
     last_message_at: datetime
     is_archived: bool
     created_at: datetime
     updated_at: datetime
 
+    @field_serializer('id', 'user_id')
+    def serialize_uuid(self, value, _info):
+        """Convert UUID to string"""
+        return str(value) if value else None
+
 
 class AIChatSessionDetailResponse(BaseModel):
     """AI chat session with full message history"""
     model_config = ConfigDict(from_attributes=True)
-    
-    id: str
-    user_id: str
+
+    id: Union[str, UUID]
+    user_id: Union[str, UUID]
     title: str
     last_message_at: datetime
     is_archived: bool
     created_at: datetime
     updated_at: datetime
     messages: List[AIChatMessageResponse]
+
+    @field_serializer('id', 'user_id')
+    def serialize_uuid(self, value, _info):
+        """Convert UUID to string"""
+        return str(value) if value else None
 
 
 class SendMessageResponse(BaseModel):
