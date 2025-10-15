@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../providers/auth_providers.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -20,16 +22,37 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      // Here you would typically handle the login logic
-      // For now, we'll just navigate to the home page
-      context.go('/home');
+      try {
+        await ref
+            .read(authNotifierProvider.notifier)
+            .login(_emailController.text.trim(), _passwordController.text);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login successful!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          context.go('/home');
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+          );
+        }
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
+    final isLoading = authState.isLoading;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
@@ -54,9 +77,16 @@ class _LoginPageState extends State<LoginPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
+                keyboardType: TextInputType.emailAddress,
+                enabled: !isLoading,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     return 'Please enter your email';
+                  }
+                  if (!RegExp(
+                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                  ).hasMatch(value.trim())) {
+                    return 'Please enter a valid email address';
                   }
                   return null;
                 },
@@ -70,6 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                   prefixIcon: Icon(Icons.lock),
                 ),
                 obscureText: true,
+                enabled: !isLoading,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your password';
@@ -82,15 +113,19 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _handleLogin,
-                  child: const Text('Login'),
+                  onPressed: isLoading ? null : _handleLogin,
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Login'),
                 ),
               ),
               const SizedBox(height: 16),
               TextButton(
-                onPressed: () {
-                  context.go('/signup');
-                },
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        context.go('/signup');
+                      },
                 child: const Text('Don\'t have an account? Sign up'),
               ),
             ],

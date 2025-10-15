@@ -13,46 +13,53 @@ class SocialPage extends StatefulWidget {
 class _SocialPageState extends State<SocialPage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
+  // Empty list - posts will be populated when user creates them
+  // In a real app, this would come from your backend/API for the current user only
+  List<String> userPosts = [];
+
+  List<Widget> get _pages => [
     // Updated Social Profile Page
     Center(
       child: Column(
         children: [
-          SizedBox(height: 20),
-          CircleAvatar(
+          const SizedBox(height: 20),
+          const CircleAvatar(
             radius: 50,
             backgroundImage: NetworkImage(
-              'https://via.placeholder.com/150',
-            ), // Placeholder image
+              'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=150&h=150&fit=crop',
+            ), // Real profile image instead of placeholder
           ),
-          SizedBox(height: 10),
-          Text(
-            'Username',
+          const SizedBox(height: 10),
+          const Text(
+            'John Doe',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 5),
-          Text(
-            'Bio: Fitness enthusiast | Traveler | Foodie',
+          const SizedBox(height: 5),
+          const Text(
+            'Fitness enthusiast | Traveler | Foodie',
             style: TextStyle(fontSize: 14, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Column(
                 children: [
                   Text(
-                    '150',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    '${userPosts.length}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  Text(
+                  const Text(
                     'Posts',
                     style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ],
               ),
-              Column(
+              const Column(
                 children: [
                   Text(
                     '2.5K',
@@ -64,7 +71,7 @@ class _SocialPageState extends State<SocialPage> {
                   ),
                 ],
               ),
-              Column(
+              const Column(
                 children: [
                   Text(
                     '300',
@@ -78,23 +85,65 @@ class _SocialPageState extends State<SocialPage> {
               ),
             ],
           ),
-          SizedBox(height: 20),
-          Divider(),
+          const SizedBox(height: 20),
+          const Divider(),
           Expanded(
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-              ),
-              itemCount: 30, // Placeholder for posts
-              itemBuilder: (context, index) {
-                return Container(
-                  color: Colors.grey[300],
-                  child: Icon(Icons.image, size: 50, color: Colors.grey[700]),
-                );
-              },
-            ),
+            child: userPosts.isEmpty
+                ? const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.photo, size: 64, color: Colors.grey),
+                        SizedBox(height: 16),
+                        Text(
+                          'No posts yet',
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Share your first post!',
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  )
+                : GridView.builder(
+                    padding: const EdgeInsets.all(8),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 4,
+                          mainAxisSpacing: 4,
+                        ),
+                    itemCount: userPosts.length,
+                    itemBuilder: (context, index) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          userPosts[index],
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              color: Colors.grey[300],
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[300],
+                              child: const Icon(
+                                Icons.error,
+                                color: Colors.grey,
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),
