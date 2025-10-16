@@ -1,8 +1,6 @@
 # Ignore specified folders (top-level or nested)
-bmad-core/
-claude/
-cursor/
-github/
+.bmad-core/
+.claude/
+.cursor/
 .github/
-vscode/
 .vscode/
