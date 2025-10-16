@@ -4,6 +4,7 @@ FastAPI backend for Pump Fiction fitness tracking app with AI chatbot integratio
 
 ## Quick Start
 
+<<<<<<< HEAD
 ### 1. Install Dependencies
 
 ```bash
@@ -217,3 +218,10 @@ See [Git Configuration Guide](docs/GITIGNORE_INFO.md) for more details.
 ## License
 
 MIT License - See LICENSE file for details
+=======
+   pip install -r requirements.txt
+
+3. Start server:
+
+   uvicorn app.main:app --reload --port 8000
+>>>>>>> 56b1a38196490de143207a09238f5fcfbc9baf70

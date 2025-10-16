@@ -13,6 +13,7 @@ class SignupPage extends ConsumerStatefulWidget {
 
 class _SignupPageState extends ConsumerState<SignupPage> {
   final emailController = TextEditingController();
+  
   final phoneController = TextEditingController();
   final fullnameController = TextEditingController();
   final passwordController = TextEditingController();
