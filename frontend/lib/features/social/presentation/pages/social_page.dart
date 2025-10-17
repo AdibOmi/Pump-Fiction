@@ -155,7 +155,7 @@ class _SocialPageState extends State<SocialPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: 'Social'),
+      appBar: const CustomAppBar(),
       drawer: const CustomDrawer(),
       body: IndexedStack(
         index: _selectedIndex == 3 ? 2 : _selectedIndex,

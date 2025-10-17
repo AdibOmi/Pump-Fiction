@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: 'Pump Fiction'),
+      appBar: const CustomAppBar(),
       drawer: const CustomDrawer(),
       body: IndexedStack(index: _selectedIndex, children: _pages),
     );

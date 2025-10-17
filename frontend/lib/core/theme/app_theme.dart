@@ -11,7 +11,7 @@ class AppTheme {
     colorScheme: const ColorScheme.dark(
       primary: Color(0xFFFF8383), // main brand pink
       secondary: Colors.white70, // subtle text/icons
-      surface: Color(0xFF1E1E1E), // elevated card/sheet background
+      surface: Color.fromARGB(255, 31, 31, 31), // elevated card/sheet background
       onPrimary: Colors.white, // text/icons on primary
       onSecondary: Colors.white70, // text/icons on secondary
       onSurface: Colors.white, // text/icons on surface
@@ -79,7 +79,7 @@ class AppTheme {
 
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: const Color(0xFF1E1E1E),
+      fillColor: const Color.fromARGB(255, 29, 29, 29),
       contentPadding:
           const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
