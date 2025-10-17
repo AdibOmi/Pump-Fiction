@@ -4,6 +4,11 @@ FastAPI backend for Pump Fiction fitness tracking app with AI chatbot integratio
 
 ## Quick Start
 
+   pip install -r requirements.txt
+
+3. Start server:
+
+   uvicorn app.main:app --reload --port 8000
 ### 1. Install Dependencies
 
 ```bash
