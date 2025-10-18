@@ -42,9 +42,9 @@ class GeminiService:
             },
         ]
         
-        # Initialize model
+        # Initialize model - using gemini-2.0-flash-exp (latest experimental)
         self.model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name="gemini-2.0-flash-exp",
             generation_config=self.generation_config,
             safety_settings=self.safety_settings
         )
@@ -92,7 +92,7 @@ class GeminiService:
             
             return {
                 "response_text": response_text,
-                "model_version": "gemini-1.5-flash",
+                "model_version": "gemini-1.5-pro",
                 "tokens_used": tokens_used,
                 "safety_flag": safety_flag
             }

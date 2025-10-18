@@ -11,7 +11,10 @@ class Settings(BaseSettings):
     # Supabase settings
     SUPABASE_URL: str = Field(..., env='SUPABASE_URL')
     SUPABASE_SERVICE_KEY: str = Field(..., env='SUPABASE_SERVICE_KEY')
-    
+
+    # Google Gemini AI
+    GEMINI_API_KEY: str = Field(..., env='GEMINI_API_KEY')
+
     class Config:
         env_file = '.env'
         case_sensitive = True
