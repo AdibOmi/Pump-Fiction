@@ -28,10 +28,10 @@ class FitnessHubScreen extends StatelessWidget {
           child: GridView.builder(
             itemCount: items.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+              crossAxisCount: 1,
               mainAxisSpacing: 30,
               crossAxisSpacing: 30,
-              childAspectRatio: 1.8,
+              childAspectRatio: 4.3,
             ),
             itemBuilder: (context, i) => SectionCard(item: items[i]),
           ),
