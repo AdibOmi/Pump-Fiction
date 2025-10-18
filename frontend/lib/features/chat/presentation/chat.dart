@@ -1,12 +1,7 @@
-import 'package:flutter/material.dart';
+// Main chat page - shows list of chat sessions
+import 'pages/chat_sessions_page.dart';
 
-class ChatPage extends StatelessWidget {
+// Export as ChatPage to maintain compatibility with router
+class ChatPage extends ChatSessionsPage {
   const ChatPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text("💬 Chat Page", style: TextStyle(fontSize: 24)),
-    );
-  }
 }
