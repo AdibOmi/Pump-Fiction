@@ -1,35 +1,140 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
-import '../../../../core/widgets/custom_drawer.dart';
-import '../../../dashboard/presentation/pages/dashboard_page.dart';
-import '../../../fitness/presentation/pages/fitness_page.dart';
-import '../../../social/presentation/pages/social_page.dart';
-import '../../../marketplace/presentation/pages/marketplace_page.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-
-  // List of pages corresponding to bottom navigation tabs
-  final List<Widget> _pages = [
-    const DashboardPage(),
-    const FitnessPage(),
-    const SocialPage(),
-    const MarketplacePage(),
-  ];
+  // Simple helper for plain, borderless text
+  static Widget _plainText(String text, TextStyle style) => Text(text, style: style);
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: const CustomAppBar(),
-      drawer: const CustomDrawer(),
-      body: IndexedStack(index: _selectedIndex, children: _pages),
+      backgroundColor: theme.colorScheme.background,
+      appBar: CustomAppBar(),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top row: avatar + greeting
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 36,
+                    backgroundImage: const AssetImage('assets/images/default.jpg'),
+                    backgroundColor: theme.colorScheme.surface,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _plainText('Welcome, Alif', theme.textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 4),
+                        _plainText('Bodybuilding Program', theme.textTheme.bodyMedium!),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.notifications, color: theme.colorScheme.onBackground),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              // Stats cards row
+              Row(
+                children: [
+                  Expanded(
+                    child: Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _plainText('Current', theme.textTheme.bodySmall!),
+                            const SizedBox(height: 6),
+                            _plainText('58 kg', theme.textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _plainText('Goal', theme.textTheme.bodySmall!),
+                            const SizedBox(height: 6),
+                            _plainText('65 kg', theme.textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              // Quick actions
+              _plainText('Quick Actions', theme.textTheme.titleMedium!),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => Navigator.of(context).pushNamed('/routines'),
+                      icon: const Icon(Icons.fitness_center),
+                      label: const Text('Routines'),
+                      style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.fastfood),
+                      label: const Text('Nutrition'),
+                      style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              // Recent routines / placeholder
+              _plainText('Your Programs', theme.textTheme.titleMedium!),
+              const SizedBox(height: 8),
+              Card(
+                elevation: 1,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: ListTile(
+                  title: Text('Custom: Push', style: theme.textTheme.titleSmall),
+                  subtitle: Text('1 day • 3 exercises', style: theme.textTheme.bodySmall),
+                  trailing: Icon(Icons.chevron_right, color: theme.colorScheme.onSurface),
+                  onTap: () => Navigator.of(context).pushNamed('/routines'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
