@@ -72,7 +72,13 @@ class _ChatSessionsPageState extends ConsumerState<ChatSessionsPage> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/chat');
+            }
+          },
         ),
       ),
       body: sessionsAsync.when(

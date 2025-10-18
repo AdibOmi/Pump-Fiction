@@ -28,7 +28,7 @@ class ApiClient {
       LogInterceptor(
         requestBody: true,
         responseBody: true,
-        requestHeader: false,
+        requestHeader: true,
         responseHeader: false,
       ),
     );
@@ -71,6 +71,20 @@ class ApiClient {
     Options? options,
   }) async {
     return _dio.put<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
+  }
+
+  Future<Response<T>> patch<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) async {
+    return _dio.patch<T>(
       path,
       data: data,
       queryParameters: queryParameters,
