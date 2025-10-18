@@ -104,62 +104,14 @@ class CustomRoutinesPage extends ConsumerWidget {
             ),
       floatingActionButton: routines.isEmpty
           ? null
-          : FloatingActionButton.extended(
+          : FloatingActionButton(
               onPressed: () => _createRoutine(context, ref),
-              icon: const Icon(Icons.add),
-              label: Text(l10n.addRoutine),
+              child: const Icon(Icons.add),
+              tooltip: 'Add routine',
             ),
     );
   }
 }
-
-// class _RoutineCard extends StatelessWidget {
-//   const _RoutineCard({required this.plan, required this.onEdit, required this.onDelete});
-//   final RoutinePlan plan;
-//   final VoidCallback onEdit;
-//   final VoidCallback onDelete;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final title = plan.title.trim().isEmpty ? '(Untitled)' : plan.title;
-
-//     return Card(
-//       margin: const EdgeInsets.only(bottom: 14),
-//       child: Padding(
-//         padding: const EdgeInsets.all(14),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-//             const SizedBox(height: 8),
-//             ...plan.dayPlans.where((d) => d.exercises.isNotEmpty).map((d) => Padding(
-//               padding: const EdgeInsets.only(bottom: 6),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text('- ${d.label}', style: const TextStyle(fontWeight: FontWeight.w600)),
-//                   ...d.exercises.map((e) => Padding(
-//                         padding: const EdgeInsets.only(left: 12, top: 2),
-//                         child: Text('• ${e.name} — ${e.sets} sets, ${e.minReps}-${e.maxReps} reps'),
-//                       )),
-//                 ],
-//               ),
-//             )),
-//             const SizedBox(height: 8),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.end,
-//               children: [
-//                 OutlinedButton.icon(onPressed: onEdit, icon: const Icon(Icons.edit), label: const Text('Edit')),
-//                 const SizedBox(width: 8),
-//                 TextButton.icon(onPressed: onDelete, icon: const Icon(Icons.delete_outline), label: const Text('Delete')),
-//               ],
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class _RoutineCard extends StatelessWidget {
   const _RoutineCard({
@@ -170,6 +122,66 @@ class _RoutineCard extends StatelessWidget {
   final RoutinePlan plan;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  
+  void _showDetails(BuildContext context) {
+    final maxHeight = MediaQuery.of(context).size.height * 0.8;
+
+    showDialog(
+      context: context,
+      builder: (_) {
+        return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxHeight),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(plan.title, style: Theme.of(context).textTheme.headlineSmall),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...plan.dayPlans.map((d) {
+                            if (d.exercises.isEmpty) return const SizedBox.shrink();
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(d.label, style: const TextStyle(fontWeight: FontWeight.w700)),
+                                  const SizedBox(height: 6),
+                                  ...d.exercises.map((e) => Padding(
+                                        padding: const EdgeInsets.only(left: 8.0, bottom: 6.0),
+                                        child: Text('• ${e.name} — ${e.sets} sets, ${e.minReps}-${e.maxReps} reps'),
+                                      )),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                          const SizedBox(height: 12),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Close'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +190,7 @@ class _RoutineCard extends StatelessWidget {
 
     return InkWell(
       borderRadius: BorderRadius.circular(30),
-      onTap: () {}, // optional: maybe open routine details
+      onTap: () => _showDetails(context),
       child: Ink(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface.withOpacity(0.95),

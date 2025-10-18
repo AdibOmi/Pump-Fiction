@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/chat_providers.dart';
 import '../../data/models/chat_message_model.dart';
+
+import '../../../../core/widgets/custom_app_bar.dart';
 
 class ChatScreenPage extends ConsumerStatefulWidget {
   final String sessionId;
@@ -71,15 +74,24 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
   @override
   Widget build(BuildContext context) {
     final sessionAsync = ref.watch(currentChatSessionProvider(widget.sessionId));
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/chat');
+            }
+          },
         ),
         title: sessionAsync.when(
           data: (session) => session != null
@@ -88,37 +100,37 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
                   children: [
                     Text(
                       session.title,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: colorScheme.onSurface,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const Text(
+                    Text(
                       'AI Fitness Coach',
                       style: TextStyle(
-                        color: Colors.white54,
+                        color: colorScheme.onSurface.withOpacity(0.6),
                         fontSize: 12,
                       ),
                     ),
                   ],
                 )
-              : const Text(
+              : Text(
                   'Chat',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: colorScheme.onSurface),
                 ),
-          loading: () => const Text(
+          loading: () => Text(
             'Loading...',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: colorScheme.onSurface),
           ),
-          error: (_, __) => const Text(
+          error: (_, __) => Text(
             'Error',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: colorScheme.onSurface),
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
+            icon: Icon(Icons.refresh, color: colorScheme.onSurface),
             onPressed: () {
               ref
                   .read(currentChatSessionProvider(widget.sessionId).notifier)
@@ -133,10 +145,10 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
             child: sessionAsync.when(
               data: (session) {
                 if (session == null) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       'Session not found',
-                      style: TextStyle(color: Colors.white54),
+                      style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
                     ),
                   );
                 }
@@ -149,9 +161,15 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
                   _scrollToBottom();
                 });
 
+                // Responsive padding based on screen width
+                final horizontalPadding = screenWidth > 600 ? 32.0 : 16.0;
+
                 return ListView.builder(
                   controller: _scrollController,
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding,
+                    vertical: 16,
+                  ),
                   itemCount: session.messages.length,
                   itemBuilder: (context, index) {
                     final message = session.messages[index];
@@ -159,9 +177,9 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
                   },
                 );
               },
-              loading: () => const Center(
+              loading: () => Center(
                 child: CircularProgressIndicator(
-                  color: Color(0xFFFF8383),
+                  color: colorScheme.primary,
                 ),
               ),
               error: (error, stack) => Center(
@@ -176,16 +194,16 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
                     const SizedBox(height: 16),
                     Text(
                       'Error loading chat',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: colorScheme.onSurface,
                         fontSize: 16,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       error.toString(),
-                      style: const TextStyle(
-                        color: Colors.white54,
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.6),
                         fontSize: 12,
                       ),
                       textAlign: TextAlign.center,
@@ -202,61 +220,74 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
   }
 
   Widget _buildEmptyState() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600;
+
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1E1E1E),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.fitness_center,
-              size: 48,
-              color: Color(0xFFFF8383),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'Start Your Fitness Journey',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 48),
-            child: Text(
-              'Ask me anything about workouts, nutrition, or fitness tips!',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white54,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            alignment: WrapAlignment.center,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: isTablet ? 64.0 : 24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildSuggestionChip('Best exercises for beginners?'),
-              _buildSuggestionChip('How to improve my bench press?'),
-              _buildSuggestionChip('Meal prep tips for muscle gain'),
-              _buildSuggestionChip('Create a workout plan'),
+              Container(
+                padding: EdgeInsets.all(isTablet ? 24 : 20),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.fitness_center,
+                  size: isTablet ? 64 : 48,
+                  color: colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Start Your Fitness Journey',
+                style: TextStyle(
+                  fontSize: isTablet ? 22 : 18,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: isTablet ? 32 : 0),
+                child: Text(
+                  'Ask me anything about workouts, nutrition, or fitness tips!',
+                  style: TextStyle(
+                    fontSize: isTablet ? 16 : 14,
+                    color: colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: WrapAlignment.center,
+                children: [
+                  _buildSuggestionChip('Best exercises for beginners?'),
+                  _buildSuggestionChip('How to improve my bench press?'),
+                  _buildSuggestionChip('Meal prep tips for muscle gain'),
+                  _buildSuggestionChip('Create a workout plan'),
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildSuggestionChip(String text) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return InkWell(
       onTap: () {
         _messageController.text = text;
@@ -264,16 +295,16 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E1E),
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: const Color(0xFFFF8383).withOpacity(0.3),
+            color: colorScheme.primary.withOpacity(0.3),
           ),
         ),
         child: Text(
           text,
-          style: const TextStyle(
-            color: Colors.white70,
+          style: TextStyle(
+            color: colorScheme.onSurface.withOpacity(0.7),
             fontSize: 13,
           ),
         ),
@@ -283,6 +314,12 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
 
   Widget _buildMessageBubble(ChatMessageModel message) {
     final isUser = message.role == ChatRole.user;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Limit message width on larger screens
+    final maxWidth = screenWidth > 600 ? screenWidth * 0.7 : screenWidth * 0.8;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -295,32 +332,35 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFFFF8383),
+                color: colorScheme.primary,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.smart_toy,
-                color: Colors.white,
+                color: colorScheme.onPrimary,
                 size: 20,
               ),
             ),
             const SizedBox(width: 12),
           ],
           Flexible(
-            child: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: isUser
-                    ? const Color(0xFFFF8383)
-                    : const Color(0xFF1E1E1E),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Text(
-                message.content,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  height: 1.4,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: isUser
+                      ? colorScheme.primary
+                      : theme.cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  message.content,
+                  style: TextStyle(
+                    color: isUser ? colorScheme.onPrimary : colorScheme.onSurface,
+                    fontSize: 15,
+                    height: 1.4,
+                  ),
                 ),
               ),
             ),
@@ -330,12 +370,12 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF1E1E1E),
+                color: theme.cardColor,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.person,
-                color: Color(0xFFFF8383),
+                color: colorScheme.primary,
                 size: 20,
               ),
             ),
@@ -346,67 +386,84 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
   }
 
   Widget _buildMessageInput() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600;
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Color(0xFF1E1E1E),
+      padding: EdgeInsets.all(isTablet ? 20 : 16),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
         border: Border(
           top: BorderSide(
-            color: Color(0xFF2A2A2A),
+            color: colorScheme.onSurface.withOpacity(0.1),
             width: 1,
           ),
         ),
       ),
       child: SafeArea(
-        child: Row(
-          children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2A2A2A),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: TextField(
-                  controller: _messageController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    hintText: 'Ask your fitness coach...',
-                    hintStyle: TextStyle(color: Colors.white38),
-                    border: InputBorder.none,
-                  ),
-                  maxLines: null,
-                  textInputAction: TextInputAction.send,
-                  onSubmitted: (_) => _sendMessage(),
-                  enabled: !_isSending,
-                ),
-              ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: isTablet ? 800 : double.infinity,
             ),
-            const SizedBox(width: 12),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFFF8383),
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                icon: _isSending
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                        size: 20,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surface,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: colorScheme.onSurface.withOpacity(0.1),
                       ),
-                onPressed: _isSending ? null : _sendMessage,
-              ),
+                    ),
+                    child: TextField(
+                      controller: _messageController,
+                      style: TextStyle(color: colorScheme.onSurface),
+                      decoration: InputDecoration(
+                        hintText: 'Ask your fitness coach...',
+                        hintStyle: TextStyle(
+                          color: colorScheme.onSurface.withOpacity(0.4),
+                        ),
+                        border: InputBorder.none,
+                      ),
+                      maxLines: null,
+                      textInputAction: TextInputAction.send,
+                      onSubmitted: (_) => _sendMessage(),
+                      enabled: !_isSending,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: _isSending
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: colorScheme.onPrimary,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Icon(
+                            Icons.send,
+                            color: colorScheme.onPrimary,
+                            size: 20,
+                          ),
+                    onPressed: _isSending ? null : _sendMessage,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

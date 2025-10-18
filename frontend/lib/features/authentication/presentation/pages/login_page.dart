@@ -15,6 +15,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isPasswordVisible = false;
+  bool isSubmitting = false;
 
   @override
   void dispose() {
@@ -22,6 +23,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     passwordController.dispose();
     super.dispose();
   }
+
+  @override
+  void initState() {
+    super.initState();
+    // we rely on onChanged handlers to call setState so build can read
+    // the controllers directly for button enablement
+  }
+
+  
 
   Future<void> _handleLogin() async {
     final email = emailController.text.trim();
@@ -37,6 +47,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       return;
     }
 
+    setState(() => isSubmitting = true);
     try {
       await ref.read(authNotifierProvider.notifier).login(email, password);
 
@@ -58,6 +69,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ),
         );
       }
+    } finally {
+      if (mounted) setState(() => isSubmitting = false);
     }
   }
 
@@ -65,7 +78,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
+  // Use local submitting flag so initial provider build/loading doesn't
+  // keep the login button disabled.
+  final isLoading = isSubmitting;
+
+  return Scaffold(
       body: Stack(
         children: [
           Container(
@@ -91,7 +108,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             ),
           ),
 
-          // Login form *inside same visual area as painter*
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -133,8 +149,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     const SizedBox(height: 6),
                     TextField(
                       controller: emailController,
+                      onChanged: (_) => setState(() {}),
                       style: const TextStyle(color: Colors.white),
                       decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: Colors.black,
                         hintText: 'demo@email.com',
                         hintStyle: TextStyle(color: Colors.white54),
                         prefixIcon: Icon(
@@ -161,9 +180,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     const SizedBox(height: 6),
                     TextField(
                       controller: passwordController,
+                      onChanged: (_) => setState(() {}),
                       obscureText: !isPasswordVisible,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.black,
                         hintText: 'Enter your password',
                         hintStyle: const TextStyle(color: Colors.white54),
                         prefixIcon: const Icon(
@@ -211,21 +233,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: _handleLogin,
+                        onPressed: ((emailController.text.trim().isEmpty || passwordController.text.trim().isEmpty) || isLoading)
+                            ? null
+                            : _handleLogin,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFFF8383),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: Text(
-                          'Login',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
+                        child: isLoading
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                            : const Text(
+                                'Login',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
                       ),
                     ),
                     const SizedBox(height: 20),

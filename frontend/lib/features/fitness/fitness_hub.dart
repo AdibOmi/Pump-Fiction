@@ -9,6 +9,8 @@ import 'progress/progress_root.dart';
 import '../../l10n/app_localizations.dart';
 import 'journal/presentation/pages/journal_sessions_page.dart';
 
+import '../../core/widgets/custom_app_bar.dart';
+
 class FitnessHubScreen extends StatelessWidget {
   const FitnessHubScreen({super.key});
 
@@ -29,15 +31,22 @@ class FitnessHubScreen extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: GridView.builder(
-            itemCount: items.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              mainAxisSpacing: 30,
-              crossAxisSpacing: 30,
-              childAspectRatio: 4.3,
-            ),
-            itemBuilder: (context, i) => SectionCard(item: items[i]),
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              Expanded(
+                child: GridView.builder(
+                  itemCount: items.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    mainAxisSpacing: 30,
+                    crossAxisSpacing: 30,
+                    childAspectRatio: 4.8,
+                  ),
+                  itemBuilder: (context, i) => SectionCard(item: items[i]),
+                ),
+              ),
+            ],
           ),
         ),
       ),
