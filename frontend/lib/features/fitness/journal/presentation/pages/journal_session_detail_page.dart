@@ -36,7 +36,7 @@ class JournalSessionDetailPage extends ConsumerWidget {
                 itemBuilder: (context, i) {
                   final e = entries[i];
                   return PosterCard(
-                    imagePath: e.imagePath,
+                    imageBase64: e.imageBase64,
                     title: _formatDate(e.date),
                     weight: e.weight,
                   );

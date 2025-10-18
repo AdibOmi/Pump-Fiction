@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CreatePostPage extends StatefulWidget {
   const CreatePostPage({super.key});
@@ -31,7 +32,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('New Post'),
+        title: Text(AppLocalizations.of(context)!.newPost),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           TextButton(

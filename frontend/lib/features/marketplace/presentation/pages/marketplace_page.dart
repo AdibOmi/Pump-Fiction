@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class MarketplacePage extends StatelessWidget {
   const MarketplacePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    final l10n = AppLocalizations.of(context)!;
+    
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.shopping_cart, size: 80, color: Colors.deepPurple),
-            SizedBox(height: 16),
+            const Icon(Icons.shopping_cart, size: 80, color: Colors.deepPurple),
+            const SizedBox(height: 16),
             Text(
-              'Marketplace',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              l10n.marketplace,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Shop for fitness equipment and supplements',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              l10n.shopForFitnessEquipmentAndSupplements,
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
             ),
           ],
         ),

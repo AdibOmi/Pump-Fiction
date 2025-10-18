@@ -31,20 +31,18 @@ class JournalRepository:
             .first()
         )
 
-    async def set_session_cover(self, session_id: int, cover_url: str, cover_path: str):
+    async def set_session_cover(self, session_id: int, cover_image_base64: str):
         session = self.db.query(JournalSession).filter(JournalSession.id == session_id).first()
         if session:
-            session.cover_image_url = cover_url
-            session.cover_image_path = cover_path
+            session.cover_image_base64 = cover_image_base64
             self.db.commit()
             self.db.refresh(session)
         return session
 
-    async def add_entry(self, session_id: int, image_url: str, image_path: str, weight: Optional[float]) -> JournalEntry:
+    async def add_entry(self, session_id: int, image_base64: str, weight: Optional[float]) -> JournalEntry:
         entry = JournalEntry(
             session_id=session_id,
-            image_url=image_url,
-            image_path=image_path,
+            image_base64=image_base64,
             weight=weight,
         )
         self.db.add(entry)

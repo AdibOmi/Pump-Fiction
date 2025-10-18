@@ -1,0 +1,167 @@
+{
+  "@@locale": "en",
+  "appTitle": "Pump Fiction",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+
+  "home": "Home",
+  "@home": {
+    "description": "Home page title"
+  },
+
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings page title"
+  },
+
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile page title"
+  },
+
+  "fitness": "Fitness",
+  "@fitness": {
+    "description": "Fitness page title"
+  },
+
+  "social": "Social",
+  "@social": {
+    "description": "Social page title"
+  },
+
+  "chat": "Chat",
+  "@chat": {
+    "description": "Chat page title"
+  },
+
+  "marketplace": "Marketplace",
+  "@marketplace": {
+    "description": "Marketplace page title"
+  },
+
+  "appearance": "Appearance",
+  "@appearance": {
+    "description": "Appearance section in settings"
+  },
+
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Dark mode toggle in settings"
+  },
+
+  "language": "Language",
+  "@language": {
+    "description": "Language section in settings"
+  },
+
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Title for language selection dialog"
+  },
+
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+
+  "about": "About",
+  "@about": {
+    "description": "About section in settings"
+  },
+
+  "appVersion": "App Version",
+  "@appVersion": {
+    "description": "App version label in settings"
+  },
+
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Dashboard page title"
+  },
+
+  "yourFitnessDashboardWillBeHere": "Your fitness dashboard will be here",
+  "@yourFitnessDashboardWillBeHere": {
+    "description": "Dashboard placeholder text"
+  },
+
+  "yourFitnessRoutinesAndExercisesWillBeHere": "Your fitness routines and exercises will be here",
+  "@yourFitnessRoutinesAndExercisesWillBeHere": {
+    "description": "Fitness page placeholder text"
+  },
+
+  "shopForFitnessEquipmentAndSupplements": "Shop for fitness equipment and supplements",
+  "@shopForFitnessEquipmentAndSupplements": {
+    "description": "Marketplace page placeholder text"
+  },
+
+  "menu": "Menu",
+  "@menu": {
+    "description": "Drawer menu title"
+  },
+
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout option"
+  },
+
+  "routine": "Routine",
+  "@routine": {
+    "description": "Routine section in fitness"
+  },
+
+  "workout": "Workout",
+  "@workout": {
+    "description": "Workout section in fitness"
+  },
+
+  "nutrition": "Nutrition",
+  "@nutrition": {
+    "description": "Nutrition section in fitness"
+  },
+
+  "progress": "Progress",
+  "@progress": {
+    "description": "Progress section in fitness"
+  },
+
+  "workoutProgress": "Workout Progress",
+  "@workoutProgress": {
+    "description": "Workout progress title"
+  },
+
+  "graphsBasedOnYourLoggedWorkouts": "Graphs based on your logged workouts",
+  "@graphsBasedOnYourLoggedWorkouts": {
+    "description": "Workout progress description"
+  },
+
+  "yourTrackers": "Your Trackers",
+  "@yourTrackers": {
+    "description": "Trackers title"
+  },
+
+  "createCustomTrackersAndLogValues": "Create custom trackers and log values",
+  "@createCustomTrackersAndLogValues": {
+    "description": "Trackers description"
+  },
+
+  "feed": "Feed",
+  "@feed": {
+    "description": "Social feed"
+  },
+
+  "create": "Create",
+  "@create": {
+    "description": "Create button"
+  },
+
+  "search": "Search",
+  "@search": {
+    "description": "Search button"
+  },
+
+  "newPost": "New Post",
+  "@newPost": {
+    "description": "New post title"
+  }
+}

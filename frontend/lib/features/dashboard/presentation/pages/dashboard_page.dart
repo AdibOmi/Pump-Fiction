@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    final l10n = AppLocalizations.of(context)!;
+    
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.dashboard, size: 80, color: Colors.deepPurple),
-            SizedBox(height: 16),
+            const Icon(Icons.dashboard, size: 80, color: Colors.deepPurple),
+            const SizedBox(height: 16),
             Text(
-              'Dashboard',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              l10n.dashboard,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Your fitness dashboard will be here',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              l10n.yourFitnessDashboardWillBeHere,
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
             ),
           ],
         ),

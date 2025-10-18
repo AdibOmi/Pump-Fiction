@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../journal/domain/journal_providers.dart';
@@ -81,15 +83,15 @@ class _SessionTile extends StatelessWidget {
       tileColor: Theme.of(context).colorScheme.surface,
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: session.coverImagePath == null
+        child: session.coverImageBase64 == null
             ? Container(
                 width: 56,
                 height: 56,
                 color: Theme.of(context).colorScheme.primaryContainer,
                 child: const Icon(Icons.image_not_supported_outlined),
               )
-            : Image.network(
-                session.coverImagePath!,
+            : Image.memory(
+                _decodeDataUri(session.coverImageBase64!),
                 width: 56,
                 height: 56,
                 fit: BoxFit.cover,
@@ -112,6 +114,12 @@ class _SessionTile extends StatelessWidget {
         );
       },
     );
+  }
+
+  static Uint8List _decodeDataUri(String dataUri) {
+    final comma = dataUri.indexOf(',');
+    final b64 = comma >= 0 ? dataUri.substring(comma + 1) : dataUri;
+    return base64Decode(b64);
   }
 }
 

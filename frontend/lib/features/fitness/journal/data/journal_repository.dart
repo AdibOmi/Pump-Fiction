@@ -1,5 +1,5 @@
+import 'dart:convert';
 import 'dart:io';
-import 'package:dio/dio.dart';
 import '../../../../core/network/api_client.dart';
 import '../../journal/domain/journal_models.dart';
 
@@ -15,7 +15,7 @@ class JournalRepository {
             id: (e['id']).toString(),
             name: e['name'] as String,
             createdAt: DateTime.parse(e['created_at'] as String),
-            coverImagePath: e['cover_image_url'] as String?,
+            coverImageBase64: e['cover_image_base64'] as String?,
           ),
         )
         .toList();
@@ -31,7 +31,7 @@ class JournalRepository {
       id: (e['id']).toString(),
       name: e['name'] as String,
       createdAt: DateTime.parse(e['created_at'] as String),
-      coverImagePath: e['cover_image_url'] as String?,
+      coverImageBase64: e['cover_image_base64'] as String?,
     );
   }
 
@@ -46,7 +46,7 @@ class JournalRepository {
             id: (e['id']).toString(),
             sessionId: (e['session_id']).toString(),
             date: DateTime.parse(e['date'] as String),
-            imagePath: e['image_url'] as String,
+            imageBase64: e['image_base64'] as String,
             weight: (e['weight'] as num?)?.toDouble(),
           ),
         )
@@ -58,25 +58,32 @@ class JournalRepository {
     required File file,
     double? weight,
   }) async {
-    final formData = FormData.fromMap({
-      'weight': weight,
-      'file': await MultipartFile.fromFile(
-        file.path,
-        filename: file.path.split('/').last,
-      ),
-    });
+    final bytes = await file.readAsBytes();
+    final mime = _inferMimeType(file.path);
+    final dataUri = 'data:$mime;base64,${base64Encode(bytes)}';
+    final payload = {
+      'image_base64': dataUri,
+      if (weight != null) 'weight': weight,
+    };
     final res = await _api.post<Map<String, dynamic>>(
       '/journal/sessions/$sessionId/entries',
-      data: formData,
-      options: Options(contentType: 'multipart/form-data'),
+      data: payload,
     );
     final e = res.data!;
     return JournalEntry(
       id: (e['id']).toString(),
       sessionId: (e['session_id']).toString(),
       date: DateTime.parse(e['date'] as String),
-      imagePath: e['image_url'] as String,
+      imageBase64: e['image_base64'] as String,
       weight: (e['weight'] as num?)?.toDouble(),
     );
+  }
+
+  String _inferMimeType(String path) {
+    final lower = path.toLowerCase();
+    if (lower.endsWith('.png')) return 'image/png';
+    if (lower.endsWith('.webp')) return 'image/webp';
+    if (lower.endsWith('.gif')) return 'image/gif';
+    return 'image/jpeg';
   }
 }

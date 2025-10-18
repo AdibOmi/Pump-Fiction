@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from ..core.dependencies import get_db, get_current_user
@@ -36,13 +36,12 @@ async def list_sessions(
 @router.post("/sessions/{session_id}/entries", response_model=JournalEntryResponse)
 async def add_entry(
     session_id: int,
-    weight: Optional[float] = Form(None),
-    file: UploadFile = File(...),
+    data: JournalEntryCreate,
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
 ):
     service = JournalService(db)
-    entry = await service.add_entry(session_id, current_user["id"], file, weight)
+    entry = await service.add_entry(session_id, current_user["id"], data.image_base64, data.weight)
     return entry
 
 

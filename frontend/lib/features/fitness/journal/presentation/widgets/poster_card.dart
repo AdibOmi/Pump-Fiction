@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,11 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 class PosterCard extends StatelessWidget {
   const PosterCard({
     super.key,
-    required this.imagePath,
+    required this.imageBase64,
     required this.title,
     this.weight,
   });
-  final String imagePath;
+  final String imageBase64;
   final String title;
   final double? weight;
 
@@ -69,33 +69,16 @@ class PosterCard extends StatelessWidget {
   }
 
   Widget _buildImage() {
-    final isHttp = imagePath.startsWith('http');
-    if (isHttp) {
-      return Image.network(
-        imagePath,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(
-          color: Colors.black12,
-          child: const Icon(
-            Icons.broken_image,
-            size: 48,
-            color: Colors.white70,
-          ),
-        ),
-      );
-    } else {
-      return Image.file(
-        File(imagePath),
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(
-          color: Colors.black12,
-          child: const Icon(
-            Icons.broken_image,
-            size: 48,
-            color: Colors.white70,
-          ),
-        ),
-      );
-    }
+    final comma = imageBase64.indexOf(',');
+    final b64 = comma >= 0 ? imageBase64.substring(comma + 1) : imageBase64;
+    final bytes = base64Decode(b64);
+    return Image.memory(
+      bytes,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => Container(
+        color: Colors.black12,
+        child: const Icon(Icons.broken_image, size: 48, color: Colors.white70),
+      ),
+    );
   }
 }

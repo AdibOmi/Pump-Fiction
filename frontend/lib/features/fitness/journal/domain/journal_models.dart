@@ -6,39 +6,39 @@ class JournalSession {
   final DateTime createdAt;
 
   /// Optional cover image path (first entry image)
-  final String? coverImagePath;
+  final String? coverImageBase64;
 
   const JournalSession({
     required this.id,
     required this.name,
     required this.createdAt,
-    this.coverImagePath,
+    this.coverImageBase64,
   });
 
   JournalSession copyWith({
     String? id,
     String? name,
     DateTime? createdAt,
-    String? coverImagePath,
+    String? coverImageBase64,
   }) => JournalSession(
     id: id ?? this.id,
     name: name ?? this.name,
     createdAt: createdAt ?? this.createdAt,
-    coverImagePath: coverImagePath ?? this.coverImagePath,
+    coverImageBase64: coverImageBase64 ?? this.coverImageBase64,
   );
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
     'createdAt': createdAt.toIso8601String(),
-    'coverImagePath': coverImagePath,
+    'coverImageBase64': coverImageBase64,
   };
 
   factory JournalSession.fromJson(Map<String, dynamic> json) => JournalSession(
     id: json['id'] as String,
     name: json['name'] as String,
     createdAt: DateTime.parse(json['createdAt'] as String),
-    coverImagePath: json['coverImagePath'] as String?,
+    coverImageBase64: json['coverImageBase64'] as String?,
   );
 }
 
@@ -46,14 +46,14 @@ class JournalEntry {
   final String id;
   final String sessionId;
   final DateTime date;
-  final String imagePath; // local path for now
+  final String imageBase64; // data URI base64 image
   final double? weight;
 
   const JournalEntry({
     required this.id,
     required this.sessionId,
     required this.date,
-    required this.imagePath,
+    required this.imageBase64,
     this.weight,
   });
 
@@ -61,13 +61,13 @@ class JournalEntry {
     String? id,
     String? sessionId,
     DateTime? date,
-    String? imagePath,
+    String? imageBase64,
     double? weight,
   }) => JournalEntry(
     id: id ?? this.id,
     sessionId: sessionId ?? this.sessionId,
     date: date ?? this.date,
-    imagePath: imagePath ?? this.imagePath,
+    imageBase64: imageBase64 ?? this.imageBase64,
     weight: weight ?? this.weight,
   );
 
@@ -75,7 +75,7 @@ class JournalEntry {
     'id': id,
     'sessionId': sessionId,
     'date': date.toIso8601String(),
-    'imagePath': imagePath,
+    'imageBase64': imageBase64,
     'weight': weight,
   };
 
@@ -83,7 +83,7 @@ class JournalEntry {
     id: json['id'] as String,
     sessionId: json['sessionId'] as String,
     date: DateTime.parse(json['date'] as String),
-    imagePath: json['imagePath'] as String,
+    imageBase64: json['imageBase64'] as String,
     weight: (json['weight'] as num?)?.toDouble(),
   );
 

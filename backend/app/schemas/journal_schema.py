@@ -10,7 +10,7 @@ class JournalSessionCreate(BaseModel):
 class JournalSessionResponse(BaseModel):
     id: int
     name: str
-    cover_image_url: Optional[str] = None
+    cover_image_base64: Optional[str] = None
     created_at: datetime
 
     class Config:
@@ -18,6 +18,7 @@ class JournalSessionResponse(BaseModel):
 
 
 class JournalEntryCreate(BaseModel):
+    image_base64: str
     weight: Optional[float] = None
 
 
@@ -25,7 +26,7 @@ class JournalEntryResponse(BaseModel):
     id: int
     session_id: int
     date: datetime
-    image_url: str
+    image_base64: str
     weight: Optional[float] = None
     created_at: datetime
 
