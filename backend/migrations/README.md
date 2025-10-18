@@ -21,6 +21,12 @@ Adds phone_number field to the users table.
 ### add_posts_tables.sql
 Creates tables for the social media posts feature.
 
+### create_trackers_tables.sql ⭐ **NEW**
+Creates tables for the fitness progress trackers feature.
+
+### rollback_trackers_tables.sql
+Rollback script for tracker tables.
+
 ## Running Migrations (IN ORDER)
 
 ### Step 1: Run the user_profiles table migration
@@ -144,6 +150,40 @@ If missing, re-run migration 002.
 
 **Solution:** The user_id column has a UNIQUE constraint. This means each user can only have one profile. If you get this error, a profile already exists.
 
+## Tracker Tables Migration ⭐ **NEW**
+
+### Running the Tracker Migration
+
+**In Supabase SQL Editor:**
+1. Copy contents of `create_trackers_tables.sql`
+2. Paste and run
+
+**Creates:**
+- `trackers` table - fitness trackers (weight, blood pressure, etc.)
+- `tracker_entries` table - data points for each tracker
+- Row Level Security (RLS) policies
+- Indexes and triggers
+- Auto-updating timestamps
+
+**Rollback:**
+Run `rollback_trackers_tables.sql` if needed.
+
+**See also:** `TRACKER_MIGRATION_SUMMARY.md` in project root for full documentation.
+
+## Important Notes
+
+### Why SQL Instead of Python for Supabase?
+
+For **Supabase**, always use SQL migrations because:
+- ✅ Full control over PostgreSQL features
+- ✅ Creates proper Row Level Security (RLS) policies
+- ✅ Better for triggers, functions, and constraints
+- ✅ Version-controlled and trackable
+
+Python scripts (like `create_tracker_tables.py`) are only for quick local development.
+
 ## Additional Resources
 
 See `PROFILE_AUTOCREATE_GUIDE.md` in the project root for complete documentation on the automatic profile creation system.
+
+See `TRACKER_MIGRATION_SUMMARY.md` in the project root for complete tracker implementation documentation.

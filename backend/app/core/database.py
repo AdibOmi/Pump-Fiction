@@ -8,7 +8,9 @@ async_engine = create_async_engine(settings.DATABASE_URL, echo=True)
 AsyncSessionLocal = sessionmaker(async_engine, expire_on_commit=False, class_=AsyncSession)
 
 # Sync engine and session for sync operations
-sync_database_url = settings.DATABASE_URL.replace('+aiosqlite', '') if '+aiosqlite' in settings.DATABASE_URL else settings.DATABASE_URL
+# Convert async driver to sync driver
+sync_database_url = settings.DATABASE_URL.replace('postgresql+psycopg_async', 'postgresql+psycopg')
+sync_database_url = sync_database_url.replace('+aiosqlite', '')  # For SQLite compatibility
 sync_engine = create_engine(sync_database_url, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=sync_engine)
 
