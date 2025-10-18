@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/chat_providers.dart';
 import '../../data/models/chat_message_model.dart';
 
@@ -82,7 +83,13 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/chat');
+            }
+          },
         ),
         title: sessionAsync.when(
           data: (session) => session != null

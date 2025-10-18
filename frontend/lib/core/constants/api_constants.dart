@@ -15,6 +15,9 @@ class ApiConstants {
   static String aiChatSendMessage(String id) => '/ai-chat/sessions/$id/messages';
   static String aiChatArchive(String id) => '/ai-chat/sessions/$id/archive';
 
+  // User Profile endpoints
+  static const String userProfile = '/users/me/profile';
+
   // Headers
   static const String contentType = 'application/json';
   static const String authorization = 'Authorization';
