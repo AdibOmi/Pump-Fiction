@@ -1,7 +1,8 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_serializer
 from typing import Optional, List
 from enum import Enum
 from datetime import datetime
+from uuid import UUID
 
 
 class ChatRole(str, Enum):
@@ -34,10 +35,10 @@ class SendMessageRequest(BaseModel):
 
 class AIChatMessageResponse(BaseModel):
     """Individual chat message"""
-    model_config = ConfigDict(from_attributes=True)
-    
-    id: str
-    session_id: str
+    model_config = ConfigDict(from_attributes=True, protected_namespaces=())
+
+    id: UUID | str
+    session_id: UUID | str
     role: ChatRole
     content: str
     tokens_used: Optional[int] = None
@@ -46,32 +47,44 @@ class AIChatMessageResponse(BaseModel):
     disclaimer_shown: bool = False
     created_at: datetime
 
+    @field_serializer('id', 'session_id')
+    def serialize_uuid(self, value: UUID | str) -> str:
+        return str(value)
+
 
 class AIChatSessionResponse(BaseModel):
     """AI chat session with metadata"""
     model_config = ConfigDict(from_attributes=True)
-    
-    id: str
-    user_id: str
+
+    id: UUID | str
+    user_id: UUID | str
     title: str
     last_message_at: datetime
     is_archived: bool
     created_at: datetime
     updated_at: datetime
 
+    @field_serializer('id', 'user_id')
+    def serialize_uuid(self, value: UUID | str) -> str:
+        return str(value)
+
 
 class AIChatSessionDetailResponse(BaseModel):
     """AI chat session with full message history"""
     model_config = ConfigDict(from_attributes=True)
-    
-    id: str
-    user_id: str
+
+    id: UUID | str
+    user_id: UUID | str
     title: str
     last_message_at: datetime
     is_archived: bool
     created_at: datetime
     updated_at: datetime
     messages: List[AIChatMessageResponse]
+
+    @field_serializer('id', 'user_id')
+    def serialize_uuid(self, value: UUID | str) -> str:
+        return str(value)
 
 
 class SendMessageResponse(BaseModel):

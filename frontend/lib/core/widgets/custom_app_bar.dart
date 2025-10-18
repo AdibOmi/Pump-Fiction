@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   //final VoidCallback onDrawerTap;
@@ -33,14 +35,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       centerTitle: true,
-      title: Image.asset(
-        'assets/images/pump_logo.png',
-        height: 60,
+      title: Column(
+       // MainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/images/pump_logo.png',
+            height: 50,
+          ),  
+          Text('Home', style: TextStyle(fontSize: 10),),
+        ],
       ),
       actions: [
         IconButton(
           icon: const Icon(Icons.settings, color: Colors.white),
-          onPressed: () {},
+          onPressed: () {
+            context.go('/settings');
+          },
         ),
       ],
     );

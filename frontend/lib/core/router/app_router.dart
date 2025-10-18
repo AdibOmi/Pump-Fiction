@@ -8,7 +8,7 @@ import '../../features/social/presentation/pages/social_page.dart';
 import '../../features/chat/presentation/chat.dart';
 import '../widgets/custom_tabbar.dart';
 import '../../core/widgets/splash_screen.dart';
-
+import '../../features/settings/presentation/pages/settings.dart';
 import '../../features/fitness/fitness_hub.dart';
 
 
@@ -22,6 +22,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
     GoRoute(path: '/profile', builder: (context, state) => const ProfilePage()),
     GoRoute(path: '/marketplace', builder: (context, state) => const MarketplacePage()),
+    GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
 
     // ShellRoute for persistent bottom navigation
     ShellRoute(

@@ -3,9 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'injection_container.dart' as di;
-
-// A Riverpod provider to manage theme mode globally
-final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.dark);
+import 'features/theme/presentation/provider/theme_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
