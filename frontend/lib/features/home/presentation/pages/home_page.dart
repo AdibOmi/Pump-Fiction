@@ -1,49 +1,135 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
+import '../../../profile/presentation/providers/profile_providers.dart';
+import '../../../profile/data/models/user_profile_model.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   // Simple helper for plain, borderless text
   static Widget _plainText(String text, TextStyle style) => Text(text, style: style);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+  final profileAsync = ref.watch(userProfileProvider);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: CustomAppBar(),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top row: avatar + greeting
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 36,
-                    backgroundImage: const AssetImage('assets/images/default.jpg'),
-                    backgroundColor: theme.colorScheme.surface,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              // Full-width header card: avatar + greeting (now bound to profile data)
+              Card(
+                elevation: 1,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  child: profileAsync.when(
+                    data: (profile) {
+                      // profile is UserProfileModel?
+                      final UserProfileModel? p = profile;
+                      final rawName = p?.fullName;
+                      final name = rawName != null && rawName.isNotEmpty ? 'Welcome, $rawName' : 'Welcome';
+                      final program = p?.fitnessGoal != null ? p!.fitnessGoal!.displayName : 'No Program';
+                      final weight = p?.weightKg != null ? '${p!.weightKg} kg' : '-- kg';
+
+                      return Row(
+                        children: [
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 72,
+                            height: 72,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: const DecorationImage(
+                                image: AssetImage('assets/images/default.jpg'),
+                                fit: BoxFit.cover,
+                              ),
+                              color: theme.colorScheme.surface,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          // Texts occupy the remaining width
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _plainText(name, theme.textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 4),
+                                _plainText(program, theme.textTheme.bodyMedium!),
+                                const SizedBox(height: 6),
+                                _plainText('Weight: $weight', theme.textTheme.bodySmall!),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                    loading: () => Row(
                       children: [
-                        _plainText('Welcome, Alif', theme.textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 4),
-                        _plainText('Bodybuilding Program', theme.textTheme.bodyMedium!),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 72,
+                          height: 72,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: const DecorationImage(
+                              image: AssetImage('assets/images/default.jpg'),
+                              fit: BoxFit.cover,
+                            ),
+                            color: theme.colorScheme.surface,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _plainText('Loading...', theme.textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 4),
+                              _plainText('Please wait', theme.textTheme.bodyMedium!),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    error: (err, stack) => Row(
+                      children: [
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 72,
+                          height: 72,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: const DecorationImage(
+                              image: AssetImage('assets/images/default.jpg'),
+                              fit: BoxFit.cover,
+                            ),
+                            color: theme.colorScheme.surface,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _plainText('Welcome', theme.textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 4),
+                              _plainText('No program found', theme.textTheme.bodyMedium!),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.notifications, color: theme.colorScheme.onBackground),
-                  ),
-                ],
+                ),
               ),
 
               const SizedBox(height: 20),
@@ -54,6 +140,7 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: Card(
                       elevation: 2,
+                      color: theme.cardColor,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
@@ -72,6 +159,7 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: Card(
                       elevation: 2,
+                      color: theme.cardColor,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
@@ -91,50 +179,172 @@ class HomePage extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // Quick actions
-              _plainText('Quick Actions', theme.textTheme.titleMedium!),
+              // Primary CTA
+              Card(
+                elevation: 1,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Ready for your next workout?', style: theme.textTheme.bodyMedium),
+                            const SizedBox(height: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                // TODO: wire to routine picker
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFF8383),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                                child: Text('Start Workout', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      OutlinedButton(
+                        onPressed: () {},
+                        child: const Text('Quick Log'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 18),
+
+              // Recent Activity
+              Text('Recent activity', style: theme.textTheme.titleMedium),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 120,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 3,
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    return Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Container(
+                        width: 220,
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Workout ${index + 1}', style: theme.textTheme.titleSmall),
+                            const SizedBox(height: 6),
+                            Text('Legs • 45 min', style: theme.textTheme.bodySmall),
+                            const Spacer(),
+                            LinearProgressIndicator(value: (index + 1) * 0.25),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 18),
+
+              // Quick Actions (minimal)
+              Text('Shortcuts', style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => Navigator.of(context).pushNamed('/routines'),
-                      icon: const Icon(Icons.fitness_center),
-                      label: const Text('Routines'),
-                      style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.fastfood),
-                      label: const Text('Nutrition'),
-                      style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                    ),
-                  ),
+                  _shortcutButton(context, Icons.fitness_center, 'New Routine'),
+                  _shortcutButton(context, Icons.add, 'Add Exercise'),
+                  _shortcutButton(context, Icons.chat_bubble_outline, 'Coach'),
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 18),
 
-              // Recent routines / placeholder
-              _plainText('Your Programs', theme.textTheme.titleMedium!),
+              // Habit / Goal Tracker
+              Text('Habits & Goals', style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
               Card(
                 elevation: 1,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: ListTile(
-                  title: Text('Custom: Push', style: theme.textTheme.titleSmall),
-                  subtitle: Text('1 day • 3 exercises', style: theme.textTheme.bodySmall),
-                  trailing: Icon(Icons.chevron_right, color: theme.colorScheme.onSurface),
-                  onTap: () => Navigator.of(context).pushNamed('/routines'),
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: const Text('Workout today'),
+                      subtitle: const Text('Mark as done'),
+                      trailing: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.check_circle_outline, color: Colors.green),
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    ListTile(
+                      title: const Text('Protein intake'),
+                      subtitle: const Text('80/120 g'),
+                      trailing: IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+                    ),
+                  ],
                 ),
               ),
+
+              const SizedBox(height: 18),
+
+              // Notifications & Tips
+              Text('Notifications & Tips', style: theme.textTheme.titleMedium),
+              const SizedBox(height: 8),
+              Card(
+                elevation: 1,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Column(
+                  children: const [
+                    ListTile(
+                      leading: Icon(Icons.info_outline),
+                      title: Text('Try the new 4-week strength plan'),
+                    ),
+                    Divider(height: 1),
+                    ListTile(
+                      leading: Icon(Icons.message_outlined),
+                      title: Text('Don\'t forget to log your meals today'),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 40),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _shortcutButton(BuildContext context, IconData icon, String label) {
+    final theme = Theme.of(context);
+    return Expanded(
+      child: Column(
+        children: [
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Icon(icon, size: 28, color: theme.colorScheme.primary),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(label, style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
+        ],
+      ),
+    );
+  }
+
+  // no helper functions
 }
