@@ -15,3 +15,4 @@ class User(Base):
     posts = relationship("Post", back_populates="user")
     profile = relationship("UserProfile", back_populates="user", uselist=False)
     trackers = relationship("Tracker", back_populates="user")
+    routines = relationship("RoutineHeader", back_populates="user")

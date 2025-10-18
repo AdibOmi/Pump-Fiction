@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .controllers import user_controller, auth_controller, ai_chat_controller, post_controller, user_profile_controller, tracker_controller
+from .controllers import user_controller, auth_controller, ai_chat_controller, post_controller, user_profile_controller, tracker_controller, routine_controller
 
 router = APIRouter()
 
@@ -20,3 +20,6 @@ router.include_router(post_controller.router)
 
 # Tracker routes (Fitness progress tracking)
 router.include_router(tracker_controller.router)
+
+# Routine routes (Workout routines)
+router.include_router(routine_controller.router)

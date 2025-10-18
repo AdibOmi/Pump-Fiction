@@ -25,6 +25,11 @@ class ApiConstants {
   static String trackerEntries(int trackerId) => '/trackers/$trackerId/entries';
   static String trackerEntry(int trackerId, int entryId) => '/trackers/$trackerId/entries/$entryId';
 
+  // Routine endpoints
+  static const String routines = '/routines';
+  static String routine(String id) => '/routines/$id';
+  static String routineArchive(String id) => '/routines/$id/archive';
+
   // Headers
   static const String contentType = 'application/json';
   static const String authorization = 'Authorization';

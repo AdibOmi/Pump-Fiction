@@ -1,71 +1,113 @@
-import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/routine_models.dart';
+import '../repositories/routine_repository.dart';
 
 class RoutinesNotifier extends StateNotifier<List<RoutinePlan>> {
-  RoutinesNotifier() : super([]) {
-    _load(); // fire-and-forget load on startup
+  final RoutineRepository _repository;
+
+  RoutinesNotifier(this._repository) : super([]) {
+    _load(); // Load routines from backend on startup
   }
 
   String? currentRoutineId;
 
-  static const _kRoutinesKey = 'fitness_routines_v1';
-  static const _kCurrentKey  = 'fitness_current_routine_id_v1';
+  // ----- Load routines from backend -----
+  Future<void> _load() async {
+    try {
+      final routines = await _repository.getAllRoutines(includeArchived: false);
+      state = routines;
+    } catch (e) {
+      print('Error loading routines: $e');
+      // Keep empty state on error
+    }
+  }
+
+  // Refresh routines from backend
+  Future<void> refresh() async {
+    await _load();
+  }
 
   // ----- mutations -----
-  void add(RoutinePlan plan) {
-    state = [...state, plan];
-    _persist();
+  Future<void> add(RoutinePlan plan) async {
+    try {
+      // 🐛 DEBUG: Check what we're sending
+      print('📤 Sending routine to backend:');
+      print('Title: ${plan.title}');
+      print('DayPlans count: ${plan.dayPlans.length}');
+      for (var i = 0; i < plan.dayPlans.length; i++) {
+        print('  Day $i (${plan.dayPlans[i].label}): ${plan.dayPlans[i].exercises.length} exercises');
+      }
+      final json = plan.toBackendJson();
+      print('📦 Backend JSON:');
+      print('  title: ${json['title']}');
+      print('  day_selected: ${json['day_selected']}');
+      print('  exercises: ${json['exercises']}');
+
+      final createdRoutine = await _repository.createRoutine(plan);
+      // Use explicit list creation for reliable state update
+      final updatedList = List<RoutinePlan>.from(state);
+      updatedList.insert(0, createdRoutine);
+      state = updatedList;
+    } catch (e) {
+      print('Error adding routine: $e');
+      rethrow;
+    }
   }
 
-  void update(RoutinePlan plan) {
-    state = [
-      for (final p in state) if (p.id == plan.id) plan else p,
-    ];
-    _persist();
+  Future<void> update(RoutinePlan plan) async {
+    try {
+      final updatedRoutine = await _repository.updateRoutine(plan.id, plan);
+      state = [
+        for (final p in state) if (p.id == plan.id) updatedRoutine else p,
+      ];
+    } catch (e) {
+      print('Error updating routine: $e');
+      rethrow;
+    }
   }
 
-  void remove(String id) {
-    state = [for (final p in state) if (p.id != id) p];
-    if (currentRoutineId == id) currentRoutineId = null;
-    _persist();
+  Future<void> remove(String id) async {
+    try {
+      await _repository.deleteRoutine(id);
+      state = [for (final p in state) if (p.id != id) p];
+      if (currentRoutineId == id) currentRoutineId = null;
+    } catch (e) {
+      print('Error removing routine: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> archive(String id, bool isArchived) async {
+    try {
+      final archivedRoutine = await _repository.archiveRoutine(id, isArchived);
+      if (isArchived) {
+        // Remove from list when archived
+        state = [for (final p in state) if (p.id != id) p];
+      } else {
+        // Add back to list when unarchived
+        state = [archivedRoutine, ...state];
+      }
+    } catch (e) {
+      print('Error archiving routine: $e');
+      rethrow;
+    }
   }
 
   void setCurrent(String id) {
     currentRoutineId = id;
-    _persist();
+    // TODO: Persist current routine selection to backend or local storage if needed
   }
 
   RoutinePlan? get current =>
       state.where((p) => p.id == currentRoutineId).cast<RoutinePlan?>().firstOrNull;
-
-  // ----- persistence -----
-  Future<void> _persist() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonList = state.map((p) => p.toJson()).toList();
-    await prefs.setString(_kRoutinesKey, jsonEncode(jsonList));
-    if (currentRoutineId != null) {
-      await prefs.setString(_kCurrentKey, currentRoutineId!);
-    } else {
-      await prefs.remove(_kCurrentKey);
-    }
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_kRoutinesKey);
-    final current = prefs.getString(_kCurrentKey);
-
-    if (raw != null) {
-      final list = (jsonDecode(raw) as List<dynamic>)
-          .map((e) => RoutinePlan.fromJson(e as Map<String, dynamic>))
-          .toList();
-      state = list;
-    }
-    currentRoutineId = current;
-  }
 }
 
+final routineRepositoryProvider = Provider<RoutineRepository>((ref) {
+  return RoutineRepository();
+});
+
 final routinesProvider =
-    StateNotifierProvider<RoutinesNotifier, List<RoutinePlan>>((ref) => RoutinesNotifier());
+    StateNotifierProvider<RoutinesNotifier, List<RoutinePlan>>((ref) {
+  final repository = ref.watch(routineRepositoryProvider);
+  return RoutinesNotifier(repository);
+});

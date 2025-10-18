@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 enum PlanMode { weekly, nDays }
 
 class Exercise {
@@ -27,6 +25,22 @@ class Exercise {
         sets: j['sets'] as int,
         minReps: j['minReps'] as int,
         maxReps: j['maxReps'] as int,
+      );
+
+  // Backend JSON conversion (with position)
+  Map<String, dynamic> toBackendJson(int position) => {
+        'title': name,
+        'sets': sets,
+        'min_reps': minReps,
+        'max_reps': maxReps,
+        'position': position,
+      };
+
+  factory Exercise.fromBackendJson(Map<String, dynamic> j) => Exercise(
+        name: j['title'] as String,
+        sets: j['sets'] as int,
+        minReps: j['min_reps'] as int,
+        maxReps: j['max_reps'] as int,
       );
 }
 
@@ -60,12 +74,14 @@ class RoutinePlan {
   final String title;
   final PlanMode mode;
   final List<DayPlan> dayPlans;
+  final bool isArchived;
 
   RoutinePlan({
     String? id,
     required this.title,
     required this.mode,
     required List<DayPlan> dayPlans,
+    this.isArchived = false,
   })  : id = id ?? DateTime.now().microsecondsSinceEpoch.toString(),
         dayPlans = List.of(dayPlans);
 
@@ -74,19 +90,22 @@ class RoutinePlan {
     String? title,
     PlanMode? mode,
     List<DayPlan>? dayPlans,
+    bool? isArchived,
   }) =>
       RoutinePlan(
         id: id ?? this.id,
         title: title ?? this.title,
         mode: mode ?? this.mode,
         dayPlans: dayPlans ?? List.of(this.dayPlans),
+        isArchived: isArchived ?? this.isArchived,
       );
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
-        'mode': describeEnum(mode),
+        'mode': mode.name,
         'dayPlans': dayPlans.map((d) => d.toJson()).toList(),
+        'isArchived': isArchived,
       };
 
   factory RoutinePlan.fromJson(Map<String, dynamic> j) => RoutinePlan(
@@ -96,7 +115,56 @@ class RoutinePlan {
         dayPlans: (j['dayPlans'] as List<dynamic>)
             .map((d) => DayPlan.fromJson(d as Map<String, dynamic>))
             .toList(),
+        isArchived: j['isArchived'] as bool? ?? false,
       );
+
+  // Backend JSON conversion - collect ALL exercises from ALL days
+  Map<String, dynamic> toBackendJson() {
+    // Collect all exercises from all day plans with their day labels
+    final allExercises = <Map<String, dynamic>>[];
+    int position = 0;
+
+    // Get all days that have exercises
+    final daysWithExercises = dayPlans.where((day) => day.exercises.isNotEmpty).toList();
+
+    // Build day_selected string (e.g., "Sat, Sun, Mon")
+    final dayLabels = daysWithExercises.map((day) => day.label).join(', ');
+
+    // Collect all exercises from all days
+    for (final day in dayPlans) {
+      for (final exercise in day.exercises) {
+        allExercises.add(exercise.toBackendJson(position));
+        position++;
+      }
+    }
+
+    return {
+      'title': title,
+      'day_selected': dayLabels.isEmpty ? 'Not set' : dayLabels,
+      'is_archived': isArchived,
+      'exercises': allExercises,
+    };
+  }
+
+  factory RoutinePlan.fromBackendJson(Map<String, dynamic> j) {
+    // Convert backend RoutineHeader to frontend RoutinePlan
+    final exercises = (j['exercises'] as List<dynamic>?)
+        ?.map((e) => Exercise.fromBackendJson(e as Map<String, dynamic>))
+        .toList() ?? [];
+
+    final dayPlan = DayPlan(
+      label: j['day_selected'] as String? ?? 'Day 1',
+      exercises: exercises,
+    );
+
+    return RoutinePlan(
+      id: j['id']?.toString() ?? DateTime.now().microsecondsSinceEpoch.toString(),
+      title: j['title'] as String,
+      mode: PlanMode.nDays, // Default to nDays mode from backend
+      dayPlans: [dayPlan],
+      isArchived: j['is_archived'] as bool? ?? false,
+    );
+  }
 
   String prettyPrint() {
     final buffer = StringBuffer();
