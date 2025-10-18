@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 class CreatePostPage extends StatefulWidget {
@@ -26,6 +27,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -38,7 +41,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             }
           },
         ),
-        title: const Text('New Post'),
+        title: Text(l10n.newPost),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           TextButton(
@@ -46,9 +49,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
               // Handle post creation
               _createPost();
             },
-            child: const Text(
-              'Share',
-              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+            child: Text(
+              l10n.share,
+              style: const TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -96,7 +102,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: _selectImage,
-                          child: const Text('Select Photo'),
+                          child: Text(l10n.selectPhoto),
                         ),
                       ],
                     ),
@@ -104,17 +110,17 @@ class _CreatePostPageState extends State<CreatePostPage> {
             const SizedBox(height: 20),
 
             // Caption input
-            const Text(
-              'Caption',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Text(
+              l10n.caption,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _captionController,
               maxLines: 4,
-              decoration: const InputDecoration(
-                hintText: 'Write a caption...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: l10n.writeACaption,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 20),
@@ -122,14 +128,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
             // Location section
             ListTile(
               leading: const Icon(Icons.location_on),
-              title: const Text('Add Location'),
+              title: Text(l10n.addLocation),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
                 // Handle location selection
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Location feature coming soon!'),
-                  ),
+                  SnackBar(content: Text(l10n.locationFeatureComingSoon)),
                 );
               },
             ),
@@ -137,14 +141,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
             // Tag people section
             ListTile(
               leading: const Icon(Icons.person_add),
-              title: const Text('Tag People'),
+              title: Text(l10n.tagPeople),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
                 // Handle tagging people
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Tag people feature coming soon!'),
-                  ),
+                  SnackBar(content: Text(l10n.tagPeopleFeatureComingSoon)),
                 );
               },
             ),
@@ -155,6 +157,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 
   Future<void> _selectImage() async {
+    final l10n = AppLocalizations.of(context)!;
+
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -163,7 +167,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             children: [
               ListTile(
                 leading: const Icon(Icons.camera_alt),
-                title: const Text('Take Photo'),
+                title: Text(l10n.takePhoto),
                 onTap: () {
                   Navigator.pop(context);
                   _pickImage(ImageSource.camera);
@@ -171,7 +175,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: const Text('Choose from Gallery'),
+                title: Text(l10n.chooseFromGallery),
                 onTap: () {
                   Navigator.pop(context);
                   _pickImage(ImageSource.gallery);
@@ -209,28 +213,38 @@ class _CreatePostPageState extends State<CreatePostPage> {
           });
         }
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Image selected successfully!')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.imageSelectedSuccessfully,
+            ),
+          ),
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error selecting image: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorSelectingImage(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
   void _createPost() {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_selectedImageFile == null && _webImageBytes == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an image first')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.pleaseSelectAnImageFirst)));
       return;
     }
 
     // Handle post creation logic here
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Post created successfully!')));
+    ).showSnackBar(SnackBar(content: Text(l10n.postCreatedSuccessfully)));
 
     // Navigate back to social page
     Navigator.pop(context);

@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/authentication/presentation/providers/auth_providers.dart';
+import '../../l10n/app_localizations.dart';
 
 class CustomDrawer extends ConsumerWidget {
   const CustomDrawer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.deepPurple),
+          DrawerHeader(
+            decoration: const BoxDecoration(color: Colors.deepPurple),
             child: Text(
-              'Menu',
-              style: TextStyle(color: Colors.white, fontSize: 24),
+              l10n.menu,
+              style: const TextStyle(color: Colors.white, fontSize: 24),
             ),
           ),
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text('Profile'),
+            title: Text(l10n.profile),
             onTap: () {
               Navigator.pop(context);
               context.go('/profile');
@@ -29,40 +31,18 @@ class CustomDrawer extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
+            title: Text(l10n.settings),
             onTap: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Settings coming soon!')),
-              );
+              context.go('/settings');
             },
           ),
           ListTile(
             leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
-            onTap: () async {
+            title: Text(l10n.logout),
+            onTap: () {
               Navigator.pop(context);
-              try {
-                await ref.read(authNotifierProvider.notifier).logout();
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Logged out successfully!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                  context.go('/login');
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Logout failed: $e'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              }
+              // Add logout logic here when authProvider is properly implemented
             },
           ),
           const Divider(),

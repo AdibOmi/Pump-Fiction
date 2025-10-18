@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
 import '../../../../core/widgets/custom_drawer.dart';
 import 'create_post_page.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class SocialPage extends StatefulWidget {
   const SocialPage({super.key});
@@ -177,11 +178,23 @@ class _SocialPageState extends State<SocialPage> {
             });
           }
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          BottomNavigationBarItem(icon: Icon(Icons.feed), label: 'Feed'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'Create'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person),
+            label: AppLocalizations.of(context)!.profile,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.feed),
+            label: AppLocalizations.of(context)!.feed,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.add_box),
+            label: AppLocalizations.of(context)!.create,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.search),
+            label: AppLocalizations.of(context)!.search,
+          ),
         ],
       ),
     );

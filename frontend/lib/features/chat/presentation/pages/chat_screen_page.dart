@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../providers/chat_providers.dart';
 import '../../data/models/chat_message_model.dart';
 
+import '../../../../core/widgets/custom_app_bar.dart';
+
 class ChatScreenPage extends ConsumerStatefulWidget {
   final String sessionId;
 
