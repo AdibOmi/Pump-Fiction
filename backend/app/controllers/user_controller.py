@@ -19,19 +19,8 @@ async def _get_user_service(db: AsyncSession = Depends(get_db)):
 
 # ========== Protected Endpoints Examples ==========
 
-@router.get('/me/profile')
-async def get_my_profile(current_user: dict = Depends(get_current_user)):
-    """
-    Get current user's profile
-    - Requires authentication
-    """
-    return {
-        "id": current_user["id"],
-        "email": current_user["email"],
-        "full_name": current_user["full_name"],
-        "role": current_user["role"]
-    }
-
+# NOTE: /users/me/profile is handled by user_profile_controller.py
+# This provides the full profile with fitness data
 
 @router.get('/trainers')
 async def list_trainers(current_user: dict = Depends(get_current_user)):
