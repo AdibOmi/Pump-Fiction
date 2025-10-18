@@ -5,6 +5,8 @@ import 'nutrition/nutrition_page.dart';
 import 'progress/progress_page.dart';
 import 'widgets/section_card.dart';
 import 'models/hub_item.dart';
+import 'progress/progress_root.dart';
+
 
 class FitnessHubScreen extends StatelessWidget {
   const FitnessHubScreen({super.key});
@@ -15,7 +17,7 @@ class FitnessHubScreen extends StatelessWidget {
       HubItem('Routine', Icons.event_note, const RoutineHubPage()),
       HubItem('Workout', Icons.fitness_center, const WorkoutPage()),
       HubItem('Nutrition', Icons.restaurant, const NutritionPage()),
-      HubItem('Progress', Icons.show_chart, const ProgressPage()),
+      HubItem('Progress', Icons.show_chart, const ProgressRoot()),
     ];
 
     return Scaffold(

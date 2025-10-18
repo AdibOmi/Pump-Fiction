@@ -12,8 +12,9 @@ import '../../features/settings/presentation/pages/settings.dart';
 import '../../features/fitness/fitness_hub.dart';
 
 
+
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/fitness',
   routes: [
     // Pages without bottom tab bar
     GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
