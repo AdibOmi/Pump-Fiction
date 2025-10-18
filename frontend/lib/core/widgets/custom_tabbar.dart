@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../l10n/app_localizations.dart';
 
 class MainTabScaffold extends StatelessWidget {
   final Widget child;
-  final String currentLocation; 
-  const MainTabScaffold({super.key, required this.child, required this.currentLocation});
+  final String currentLocation;
+  const MainTabScaffold({
+    super.key,
+    required this.child,
+    required this.currentLocation,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     int currentIndex = 0;
 
-    if (currentLocation.startsWith('/fitness')) currentIndex = 1;
-    else if (currentLocation.startsWith('/social')) currentIndex = 2;
-    else if (currentLocation.startsWith('/chat')) currentIndex = 3;
+    if (currentLocation.startsWith('/fitness'))
+      currentIndex = 1;
+    else if (currentLocation.startsWith('/social'))
+      currentIndex = 2;
+    else if (currentLocation.startsWith('/chat'))
+      currentIndex = 3;
 
     return Scaffold(
       body: child,
@@ -34,23 +43,27 @@ class MainTabScaffold extends StatelessWidget {
               break;
           }
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Home'),
+            icon: const Icon(Icons.home_outlined),
+            activeIcon: const Icon(Icons.home),
+            label: l10n.home,
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.fitness_center_outlined),
-              activeIcon: Icon(Icons.fitness_center),
-              label: 'Fitness'),
+            icon: const Icon(Icons.fitness_center_outlined),
+            activeIcon: const Icon(Icons.fitness_center),
+            label: l10n.fitness,
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.people_outline),
-              activeIcon: Icon(Icons.people),
-              label: 'Social'),
+            icon: const Icon(Icons.groups_outlined),
+            activeIcon: const Icon(Icons.groups),
+            label: l10n.social,
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_outline),
-              activeIcon: Icon(Icons.chat_bubble),
-              label: 'Chat'),
+            icon: const Icon(Icons.chat_outlined),
+            activeIcon: const Icon(Icons.chat),
+            label: l10n.chat,
+          ),
         ],
       ),
     );

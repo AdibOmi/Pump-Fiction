@@ -149,6 +149,11 @@ pytest
 python init_db.py
 ```
 
+### Journal Feature
+
+- SQL: see `migrations/add_journal_tables.sql` for table DDL.
+- API docs: see `docs/JOURNAL_API.md`.
+
 ### Code Quality
 ```bash
 # Format code
