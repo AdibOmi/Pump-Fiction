@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/chat_providers.dart';
 import '../../data/models/chat_message_model.dart';
 
+import '../../../../core/widgets/custom_app_bar.dart';
+
 class ChatScreenPage extends ConsumerStatefulWidget {
   final String sessionId;
 
@@ -74,59 +76,60 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E1E),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: sessionAsync.when(
-          data: (session) => session != null
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      session.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Text(
-                      'AI Fitness Coach',
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                )
-              : const Text(
-                  'Chat',
-                  style: TextStyle(color: Colors.white),
-                ),
-          loading: () => const Text(
-            'Loading...',
-            style: TextStyle(color: Colors.white),
-          ),
-          error: (_, __) => const Text(
-            'Error',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: () {
-              ref
-                  .read(currentChatSessionProvider(widget.sessionId).notifier)
-                  .refresh();
-            },
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: const Color(0xFF1E1E1E),
+      //   elevation: 0,
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back, color: Colors.white),
+      //     onPressed: () => Navigator.pop(context),
+      //   ),
+      //   title: sessionAsync.when(
+      //     data: (session) => session != null
+      //         ? Column(
+      //             crossAxisAlignment: CrossAxisAlignment.start,
+      //             children: [
+      //               Text(
+      //                 session.title,
+      //                 style: const TextStyle(
+      //                   color: Colors.white,
+      //                   fontSize: 16,
+      //                   fontWeight: FontWeight.bold,
+      //                 ),
+      //               ),
+      //               const Text(
+      //                 'AI Fitness Coach',
+      //                 style: TextStyle(
+      //                   color: Colors.white54,
+      //                   fontSize: 12,
+      //                 ),
+      //               ),
+      //             ],
+      //           )
+      //         : const Text(
+      //             'Chat',
+      //             style: TextStyle(color: Colors.white),
+      //           ),
+      //     loading: () => const Text(
+      //       'Loading...',
+      //       style: TextStyle(color: Colors.white),
+      //     ),
+      //     error: (_, __) => const Text(
+      //       'Error',
+      //       style: TextStyle(color: Colors.white),
+      //     ),
+      //   ),
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.refresh, color: Colors.white),
+      //       onPressed: () {
+      //         ref
+      //             .read(currentChatSessionProvider(widget.sessionId).notifier)
+      //             .refresh();
+      //       },
+      //     ),
+      //   ],
+      // ),
+      appBar: CustomAppBar(),
       body: Column(
         children: [
           Expanded(

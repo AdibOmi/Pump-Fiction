@@ -17,20 +17,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLight = Theme.of(context).brightness == Brightness.light;
+
     return AppBar(
-      backgroundColor: Colors.transparent,
-      flexibleSpace: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/starry_sky.jpeg'),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
+      backgroundColor: isLight ? const Color.fromARGB(255, 255, 255, 255) : Colors.transparent,
+      flexibleSpace: isLight
+          ? null
+          : Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/starry_sky.jpeg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
       elevation: 10,
       leading: Builder(
         builder: (context) => IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white),
+          icon: Icon(Icons.menu, color: isLight ? Colors.black87 : Colors.white),
           onPressed: () => Scaffold.of(context).openDrawer(),
         ),
       ),
@@ -40,14 +44,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           Image.asset(
             'assets/images/pump_logo.png',
-            height: 50,
-          ),  
-          Text('Home', style: TextStyle(fontSize: 10),),
+            height: 60,
+          ),
+          // Text('Home', style: TextStyle(fontSize: 10),),
         ],
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.settings, color: Colors.white),
+          icon: Icon(Icons.settings, color: isLight ? Colors.black87 : Colors.white),
           onPressed: () {
             context.go('/settings');
           },
