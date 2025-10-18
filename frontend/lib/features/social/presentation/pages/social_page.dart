@@ -179,10 +179,22 @@ class _SocialPageState extends State<SocialPage> {
           }
         },
         items: [
-          BottomNavigationBarItem(icon: const Icon(Icons.person), label: AppLocalizations.of(context)!.profile),
-          BottomNavigationBarItem(icon: const Icon(Icons.feed), label: AppLocalizations.of(context)!.feed),
-          BottomNavigationBarItem(icon: const Icon(Icons.add_box), label: AppLocalizations.of(context)!.create),
-          BottomNavigationBarItem(icon: const Icon(Icons.search), label: AppLocalizations.of(context)!.search),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person),
+            label: AppLocalizations.of(context)!.profile,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.feed),
+            label: AppLocalizations.of(context)!.feed,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.add_box),
+            label: AppLocalizations.of(context)!.create,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.search),
+            label: AppLocalizations.of(context)!.search,
+          ),
         ],
       ),
     );

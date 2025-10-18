@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import '../../l10n/app_localizations.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   //final VoidCallback onDrawerTap;
@@ -36,13 +36,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       centerTitle: true,
       title: Column(
-       // MainAxisAlignment: MainAxisAlignment.center,
+        // MainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            'assets/images/pump_logo.png',
-            height: 50,
-          ),  
-          Text('Home', style: TextStyle(fontSize: 10),),
+          Image.asset('assets/images/pump_logo.png', height: 50),
+          Text(
+            AppLocalizations.of(context)!.home,
+            style: const TextStyle(fontSize: 10),
+          ),
         ],
       ),
       actions: [

@@ -163,5 +163,495 @@
   "newPost": "নতুন পোস্ট",
   "@newPost": {
     "description": "New post title"
+  },
+
+  "createRoutine": "রুটিন তৈরি করুন",
+  "@createRoutine": {
+    "description": "Create routine page title"
+  },
+
+  "routineTitle": "রুটিনের শিরোনাম",
+  "@routineTitle": {
+    "description": "Routine title input label"
+  },
+
+  "planType": "পরিকল্পনার ধরণ",
+  "@planType": {
+    "description": "Plan type label"
+  },
+
+  "weekly": "সাপ্তাহিক",
+  "@weekly": {
+    "description": "Weekly plan type"
+  },
+
+  "numberOfDays": "দিনের সংখ্যা",
+  "@numberOfDays": {
+    "description": "Number of days plan type"
+  },
+
+  "days": "দিন",
+  "@days": {
+    "description": "Days label"
+  },
+
+  "renameDay": "দিনের নাম পরিবর্তন করুন",
+  "@renameDay": {
+    "description": "Rename day dialog title"
+  },
+
+  "dayName": "দিনের নাম",
+  "@dayName": {
+    "description": "Day name input label"
+  },
+
+  "save": "সংরক্ষণ",
+  "@save": {
+    "description": "Save button"
+  },
+
+  "addExercise": "ব্যায়াম যোগ করুন",
+  "@addExercise": {
+    "description": "Add exercise dialog title"
+  },
+
+  "exerciseName": "ব্যায়ামের নাম",
+  "@exerciseName": {
+    "description": "Exercise name input label"
+  },
+
+  "sets": "সেট",
+  "@sets": {
+    "description": "Sets input label"
+  },
+
+  "minReps": "সর্বনিম্ন রেপস",
+  "@minReps": {
+    "description": "Minimum reps input label"
+  },
+
+  "maxReps": "সর্বোচ্চ রেপস",
+  "@maxReps": {
+    "description": "Maximum reps input label"
+  },
+
+  "required": "প্রয়োজনীয়",
+  "@required": {
+    "description": "Required field validation message"
+  },
+
+  "enterSets": "সেট লিখুন",
+  "@enterSets": {
+    "description": "Sets validation message"
+  },
+
+  "enterMin": "সর্বনিম্ন লিখুন",
+  "@enterMin": {
+    "description": "Min reps validation message"
+  },
+
+  "enterMax": "সর্বোচ্চ লিখুন",
+  "@enterMax": {
+    "description": "Max reps validation message"
+  },
+
+  "maxMustBeGreaterThanMin": "সর্বোচ্চ অবশ্যই সর্বনিম্নের চেয়ে বেশি বা সমান হতে হবে",
+  "@maxMustBeGreaterThanMin": {
+    "description": "Max reps validation message"
+  },
+
+  "add": "যোগ করুন",
+  "@add": {
+    "description": "Add button"
+  },
+
+  "noExercisesYet": "এখনও কোনো ব্যায়াম নেই",
+  "@noExercisesYet": {
+    "description": "No exercises message"
+  },
+
+  "tapToAddExercises": "ব্যায়াম যোগ করতে + চাপুন",
+  "@tapToAddExercises": {
+    "description": "Add exercises instruction"
+  },
+
+  "exercises": "ব্যায়াম",
+  "@exercises": {
+    "description": "Exercises label"
+  },
+
+  "noExercisesYetTapAddExerciseToStart": "এখনও কোনো ব্যায়াম নেই। শুরু করতে 'ব্যায়াম যোগ করুন' চাপুন।",
+  "@noExercisesYetTapAddExerciseToStart": {
+    "description": "No exercises instruction message"
+  },
+
+  "saveDay": "দিন সংরক্ষণ করুন",
+  "@saveDay": {
+    "description": "Save day button"
+  },
+
+  "addExerciseButton": "ব্যায়াম যোগ করুন",
+  "@addExerciseButton": {
+    "description": "Add exercise button text"
+  },
+
+  "ourPrograms": "আমাদের প্রোগ্রাম",
+  "@ourPrograms": {
+    "description": "Our Programs page title"
+  },
+
+  "saveRoutine": "রুটিন সংরক্ষণ করুন",
+  "@saveRoutine": {
+    "description": "Save routine button"
+  },
+
+  "howManyDaysIsYourProgram": "আপনার প্রোগ্রাম কতদিনের (বিশ্রামের দিনসহ)?",
+  "@howManyDaysIsYourProgram": {
+    "description": "Number of days input hint"
+  },
+
+  "saturday": "শনি",
+  "@saturday": {
+    "description": "Saturday abbreviation"
+  },
+
+  "sunday": "রবি",
+  "@sunday": {
+    "description": "Sunday abbreviation"
+  },
+
+  "monday": "সোম",
+  "@monday": {
+    "description": "Monday abbreviation"
+  },
+
+  "tuesday": "মঙ্গল",
+  "@tuesday": {
+    "description": "Tuesday abbreviation"
+  },
+
+  "wednesday": "বুধ",
+  "@wednesday": {
+    "description": "Wednesday abbreviation"
+  },
+
+  "thursday": "বৃহস্পতি",
+  "@thursday": {
+    "description": "Thursday abbreviation"
+  },
+
+  "friday": "শুক্র",
+  "@friday": {
+    "description": "Friday abbreviation"
+  },
+
+  "ourPrograms": "আমাদের প্রোগ্রাম",
+  "@ourPrograms": {
+    "description": "Our Programs section title"
+  },
+
+  "curatedPlansDescription": "নির্বাচিত পরিকল্পনা (PPL, UL, Full-body)",
+  "@curatedPlansDescription": {
+    "description": "Description for curated programs"
+  },
+
+  "customRoutines": "কাস্টম রুটিন",
+  "@customRoutines": {
+    "description": "Custom Routines section title"
+  },
+
+  "buildYourOwnWeeklyPlan": "আপনার নিজস্ব সাপ্তাহিক পরিকল্পনা তৈরি করুন",
+  "@buildYourOwnWeeklyPlan": {
+    "description": "Description for custom routines"
+  },
+
+  "customPrograms": "কাস্টম প্রোগ্রাম",
+  "@customPrograms": {
+    "description": "Custom Programs page title"
+  },
+
+  "addNewRoutine": "নতুন রুটিন যোগ করুন",
+  "@addNewRoutine": {
+    "description": "Add new routine button text"
+  },
+
+  "addRoutine": "রুটিন যোগ করুন",
+  "@addRoutine": {
+    "description": "Add routine floating button text"
+  },
+
+  "routineSaved": "রুটিন সংরক্ষিত হয়েছে",
+  "@routineSaved": {
+    "description": "Message when routine is saved"
+  },
+
+  "routineUpdated": "রুটিন আপডেট হয়েছে",
+  "@routineUpdated": {
+    "description": "Message when routine is updated"
+  },
+
+  "deleteRoutineQuestion": "রুটিন মুছবেন?",
+  "@deleteRoutineQuestion": {
+    "description": "Delete routine confirmation title"
+  },
+
+  "deleteRoutineContent": "এটি \"{routineName}\" সরিয়ে দেবে।",
+  "@deleteRoutineContent": {
+    "description": "Delete routine confirmation content",
+    "placeholders": {
+      "routineName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "delete": "মুছুন",
+  "@delete": {
+    "description": "Delete button text"
+  },
+
+  "routineDeleted": "রুটিন মুছে ফেলা হয়েছে",
+  "@routineDeleted": {
+    "description": "Message when routine is deleted"
+  },
+
+  "untitled": "(শিরোনামহীন)",
+  "@untitled": {
+    "description": "Default name for untitled routines"
+  },
+
+  "edit": "সম্পাদনা",
+  "@edit": {
+    "description": "Edit button text"
+  },
+
+  "startWorkout": "ওয়ার্কআউট শুরু করুন",
+  "@startWorkout": {
+    "description": "Start workout button text"
+  },
+
+  "share": "শেয়ার",
+  "@share": {
+    "description": "Share button"
+  },
+
+  "selectPhoto": "ছবি নির্বাচন করুন",
+  "@selectPhoto": {
+    "description": "Select photo button"
+  },
+
+  "caption": "ক্যাপশন",
+  "@caption": {
+    "description": "Caption label"
+  },
+
+  "writeACaption": "একটি ক্যাপশন লিখুন...",
+  "@writeACaption": {
+    "description": "Caption placeholder text"
+  },
+
+  "addLocation": "অবস্থান যোগ করুন",
+  "@addLocation": {
+    "description": "Add location option"
+  },
+
+  "tagPeople": "মানুষদের ট্যাগ করুন",
+  "@tagPeople": {
+    "description": "Tag people option"
+  },
+
+  "takePhoto": "ছবি তুলুন",
+  "@takePhoto": {
+    "description": "Take photo option"
+  },
+
+  "chooseFromGallery": "গ্যালারি থেকে বেছে নিন",
+  "@chooseFromGallery": {
+    "description": "Choose from gallery option"
+  },
+
+  "locationFeatureComingSoon": "অবস্থান ফিচার শীঘ্রই আসছে!",
+  "@locationFeatureComingSoon": {
+    "description": "Location feature placeholder"
+  },
+
+  "tagPeopleFeatureComingSoon": "মানুষদের ট্যাগ করার ফিচার শীঘ্রই আসছে!",
+  "@tagPeopleFeatureComingSoon": {
+    "description": "Tag people feature placeholder"
+  },
+
+  "imageSelectedSuccessfully": "ছবি সফলভাবে নির্বাচিত হয়েছে!",
+  "@imageSelectedSuccessfully": {
+    "description": "Image selection success message"
+  },
+
+  "errorSelectingImage": "ছবি নির্বাচনে ত্রুটি: {error}",
+  "@errorSelectingImage": {
+    "description": "Error selecting image message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "pleaseSelectAnImageFirst": "অনুগ্রহ করে প্রথমে একটি ছবি নির্বাচন করুন",
+  "@pleaseSelectAnImageFirst": {
+    "description": "No image selected error"
+  },
+
+  "postCreatedSuccessfully": "পোস্ট সফলভাবে তৈরি হয়েছে!",
+  "@postCreatedSuccessfully": {
+    "description": "Post creation success message"
+  },
+
+  "workoutDate": "ওয়ার্কআউটের তারিখ:",
+  "@workoutDate": {
+    "description": "Workout date label"
+  },
+
+  "pickYourCurrentRoutine": "আপনার বর্তমান রুটিন বেছে নিন",
+  "@pickYourCurrentRoutine": {
+    "description": "Routine selection text"
+  },
+
+  "whichDayAreYouTraining": "আজ কোন দিনের ট্রেনিং করছেন?",
+  "@whichDayAreYouTraining": {
+    "description": "Day selection text"
+  },
+
+  "exercises": "ব্যায়াম",
+  "@exercises": {
+    "description": "Exercises label"
+  },
+
+  "additionalExercises": "অতিরিক্ত ব্যায়াম",
+  "@additionalExercises": {
+    "description": "Additional exercises label"
+  },
+
+  "add": "যোগ করুন",
+  "@add": {
+    "description": "Add button"
+  },
+
+  "addSet": "সেট যোগ করুন",
+  "@addSet": {
+    "description": "Add set title"
+  },
+
+  "weight": "ওজন",
+  "@weight": {
+    "description": "Weight label"
+  },
+
+  "reps": "রেপস",
+  "@reps": {
+    "description": "Reps label"
+  },
+
+  "finishWorkout": "ওয়ার্কআউট শেষ করুন",
+  "@finishWorkout": {
+    "description": "Finish workout button"
+  },
+
+  "recentWorkouts": "সাম্প্রতিক ওয়ার্কআউট",
+  "@recentWorkouts": {
+    "description": "Recent workouts section"
+  },
+
+  "workoutLogged": "ওয়ার্কআউট লগ হয়েছে",
+  "@workoutLogged": {
+    "description": "Workout logged dialog title"
+  },
+
+  "close": "বন্ধ",
+  "@close": {
+    "description": "Close button"
+  },
+
+  "edit": "সম্পাদনা",
+  "@edit": {
+    "description": "Edit button"
+  },
+
+  "delete": "মুছুন",
+  "@delete": {
+    "description": "Delete button"
+  },
+
+  "save": "সংরক্ষণ",
+  "@save": {
+    "description": "Save button"
+  },
+
+  "target": "লক্ষ্য:",
+  "@target": {
+    "description": "Target label"
+  },
+
+  "sets": "সেট",
+  "@sets": {
+    "description": "Sets unit"
+  },
+
+  "loggedSets": "লগ করা সেট:",
+  "@loggedSets": {
+    "description": "Logged sets label"
+  },
+
+  "addSet2": "সেট যোগ করুন",
+  "@addSet2": {
+    "description": "Add set button text"
+  },
+
+  "yourRoutineHasNoExercisesYet": "আপনার রুটিনে এখনো কোনো ব্যায়াম নেই।",
+  "@yourRoutineHasNoExercisesYet": {
+    "description": "No exercises message"
+  },
+
+  "logTodaysWorkout": "আজকের ওয়ার্কআউট লগ করুন",
+  "@logTodaysWorkout": {
+    "description": "Log workout page title"
+  },
+
+  "createARoutineFirst": "প্রথমে একটি রুটিন তৈরি করুন",
+  "@createARoutineFirst": {
+    "description": "Create routine first message"
+  },
+
+  "addAdditionalExercise": "অতিরিক্ত ব্যায়াম যোগ করুন",
+  "@addAdditionalExercise": {
+    "description": "Add additional exercise dialog title"
+  },
+
+  "exerciseName": "ব্যায়ামের নাম",
+  "@exerciseName": {
+    "description": "Exercise name label"
+  },
+
+  "required": "প্রয়োজনীয়",
+  "@required": {
+    "description": "Required field validation"
+  },
+
+  "enterWeight": "ওজন লিখুন",
+  "@enterWeight": {
+    "description": "Weight validation message"
+  },
+
+  "enterReps": "রেপস লিখুন",
+  "@enterReps": {
+    "description": "Reps validation message"
+  },
+
+  "noWorkoutsLoggedForDay": "{day} এর জন্য এখনো কোনো ওয়ার্কআউট লগ করা হয়নি।",
+  "@noWorkoutsLoggedForDay": {
+    "description": "No workouts for specific day message",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -7,13 +7,17 @@ class FitnessPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.fitness_center, size: 80, color: Colors.deepPurple),
+            const Icon(
+              Icons.fitness_center,
+              size: 80,
+              color: Colors.deepPurple,
+            ),
             const SizedBox(height: 16),
             Text(
               l10n.fitness,

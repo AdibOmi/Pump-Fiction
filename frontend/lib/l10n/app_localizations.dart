@@ -295,6 +295,522 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New Post'**
   String get newPost;
+
+  /// Create routine page title
+  ///
+  /// In en, this message translates to:
+  /// **'Create Routine'**
+  String get createRoutine;
+
+  /// Routine title input label
+  ///
+  /// In en, this message translates to:
+  /// **'Routine Title'**
+  String get routineTitle;
+
+  /// Plan type label
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Type'**
+  String get planType;
+
+  /// Weekly plan type
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weekly;
+
+  /// Number of days plan type
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Days'**
+  String get numberOfDays;
+
+  /// Days label
+  ///
+  /// In en, this message translates to:
+  /// **'Days'**
+  String get days;
+
+  /// Rename day dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Rename Day'**
+  String get renameDay;
+
+  /// Day name input label
+  ///
+  /// In en, this message translates to:
+  /// **'Day name'**
+  String get dayName;
+
+  /// Save button
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// Add exercise dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Add Exercise'**
+  String get addExercise;
+
+  /// Exercise name label
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise name'**
+  String get exerciseName;
+
+  /// Sets unit
+  ///
+  /// In en, this message translates to:
+  /// **'sets'**
+  String get sets;
+
+  /// Minimum reps input label
+  ///
+  /// In en, this message translates to:
+  /// **'Min reps'**
+  String get minReps;
+
+  /// Maximum reps input label
+  ///
+  /// In en, this message translates to:
+  /// **'Max reps'**
+  String get maxReps;
+
+  /// Required field validation
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get required;
+
+  /// Sets validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Enter sets'**
+  String get enterSets;
+
+  /// Min reps validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Enter min'**
+  String get enterMin;
+
+  /// Max reps validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Enter max'**
+  String get enterMax;
+
+  /// Max reps validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Max must be >= min'**
+  String get maxMustBeGreaterThanMin;
+
+  /// Add button
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No exercises message
+  ///
+  /// In en, this message translates to:
+  /// **'No exercises yet'**
+  String get noExercisesYet;
+
+  /// Add exercises instruction
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + to add exercises'**
+  String get tapToAddExercises;
+
+  /// Exercises label
+  ///
+  /// In en, this message translates to:
+  /// **'Exercises'**
+  String get exercises;
+
+  /// No exercises instruction message
+  ///
+  /// In en, this message translates to:
+  /// **'No exercises yet. Tap \'Add exercise\' to start.'**
+  String get noExercisesYetTapAddExerciseToStart;
+
+  /// Save day button
+  ///
+  /// In en, this message translates to:
+  /// **'Save Day'**
+  String get saveDay;
+
+  /// Add exercise button text
+  ///
+  /// In en, this message translates to:
+  /// **'Add exercise'**
+  String get addExerciseButton;
+
+  /// Our Programs section title
+  ///
+  /// In en, this message translates to:
+  /// **'Our Programs'**
+  String get ourPrograms;
+
+  /// Save routine button
+  ///
+  /// In en, this message translates to:
+  /// **'Save Routine'**
+  String get saveRoutine;
+
+  /// Number of days input hint
+  ///
+  /// In en, this message translates to:
+  /// **'How many days is your program (including rest days)?'**
+  String get howManyDaysIsYourProgram;
+
+  /// Saturday abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get saturday;
+
+  /// Sunday abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get sunday;
+
+  /// Monday abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get monday;
+
+  /// Tuesday abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get tuesday;
+
+  /// Wednesday abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get wednesday;
+
+  /// Thursday abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get thursday;
+
+  /// Friday abbreviation
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get friday;
+
+  /// Description for curated programs
+  ///
+  /// In en, this message translates to:
+  /// **'Curated plans (PPL, UL, Full-body)'**
+  String get curatedPlansDescription;
+
+  /// Custom Routines section title
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Routines'**
+  String get customRoutines;
+
+  /// Description for custom routines
+  ///
+  /// In en, this message translates to:
+  /// **'Build your own weekly plan'**
+  String get buildYourOwnWeeklyPlan;
+
+  /// Custom Programs page title
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Programs'**
+  String get customPrograms;
+
+  /// Add new routine button text
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Routine'**
+  String get addNewRoutine;
+
+  /// Add routine floating button text
+  ///
+  /// In en, this message translates to:
+  /// **'Add Routine'**
+  String get addRoutine;
+
+  /// Message when routine is saved
+  ///
+  /// In en, this message translates to:
+  /// **'Routine saved'**
+  String get routineSaved;
+
+  /// Message when routine is updated
+  ///
+  /// In en, this message translates to:
+  /// **'Routine updated'**
+  String get routineUpdated;
+
+  /// Delete routine confirmation title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete routine?'**
+  String get deleteRoutineQuestion;
+
+  /// Delete routine confirmation content
+  ///
+  /// In en, this message translates to:
+  /// **'This will remove \"{routineName}\".'**
+  String deleteRoutineContent(String routineName);
+
+  /// Delete button
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Message when routine is deleted
+  ///
+  /// In en, this message translates to:
+  /// **'Routine deleted'**
+  String get routineDeleted;
+
+  /// Default name for untitled routines
+  ///
+  /// In en, this message translates to:
+  /// **'(Untitled)'**
+  String get untitled;
+
+  /// Edit button
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// Start workout button text
+  ///
+  /// In en, this message translates to:
+  /// **'Start Workout'**
+  String get startWorkout;
+
+  /// Share button
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// Select photo button
+  ///
+  /// In en, this message translates to:
+  /// **'Select Photo'**
+  String get selectPhoto;
+
+  /// Caption label
+  ///
+  /// In en, this message translates to:
+  /// **'Caption'**
+  String get caption;
+
+  /// Caption placeholder text
+  ///
+  /// In en, this message translates to:
+  /// **'Write a caption...'**
+  String get writeACaption;
+
+  /// Add location option
+  ///
+  /// In en, this message translates to:
+  /// **'Add Location'**
+  String get addLocation;
+
+  /// Tag people option
+  ///
+  /// In en, this message translates to:
+  /// **'Tag People'**
+  String get tagPeople;
+
+  /// Take photo option
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get takePhoto;
+
+  /// Choose from gallery option
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get chooseFromGallery;
+
+  /// Location feature placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Location feature coming soon!'**
+  String get locationFeatureComingSoon;
+
+  /// Tag people feature placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Tag people feature coming soon!'**
+  String get tagPeopleFeatureComingSoon;
+
+  /// Image selection success message
+  ///
+  /// In en, this message translates to:
+  /// **'Image selected successfully!'**
+  String get imageSelectedSuccessfully;
+
+  /// Error selecting image message
+  ///
+  /// In en, this message translates to:
+  /// **'Error selecting image: {error}'**
+  String errorSelectingImage(String error);
+
+  /// No image selected error
+  ///
+  /// In en, this message translates to:
+  /// **'Please select an image first'**
+  String get pleaseSelectAnImageFirst;
+
+  /// Post creation success message
+  ///
+  /// In en, this message translates to:
+  /// **'Post created successfully!'**
+  String get postCreatedSuccessfully;
+
+  /// Workout date label
+  ///
+  /// In en, this message translates to:
+  /// **'Workout date:'**
+  String get workoutDate;
+
+  /// Routine selection text
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your current routine'**
+  String get pickYourCurrentRoutine;
+
+  /// Day selection text
+  ///
+  /// In en, this message translates to:
+  /// **'Which day are you training?'**
+  String get whichDayAreYouTraining;
+
+  /// Additional exercises label
+  ///
+  /// In en, this message translates to:
+  /// **'Additional exercises'**
+  String get additionalExercises;
+
+  /// Add set title
+  ///
+  /// In en, this message translates to:
+  /// **'Add Set'**
+  String get addSet;
+
+  /// Weight label
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get weight;
+
+  /// Reps label
+  ///
+  /// In en, this message translates to:
+  /// **'Reps'**
+  String get reps;
+
+  /// Finish workout button
+  ///
+  /// In en, this message translates to:
+  /// **'Finish Workout'**
+  String get finishWorkout;
+
+  /// Recent workouts section
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Workouts'**
+  String get recentWorkouts;
+
+  /// Workout logged dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Workout Logged'**
+  String get workoutLogged;
+
+  /// Close button
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// Target label
+  ///
+  /// In en, this message translates to:
+  /// **'Target:'**
+  String get target;
+
+  /// Logged sets label
+  ///
+  /// In en, this message translates to:
+  /// **'Logged sets:'**
+  String get loggedSets;
+
+  /// Add set button text
+  ///
+  /// In en, this message translates to:
+  /// **'Add set'**
+  String get addSet2;
+
+  /// No exercises message
+  ///
+  /// In en, this message translates to:
+  /// **'Your routine has no exercises yet.'**
+  String get yourRoutineHasNoExercisesYet;
+
+  /// Log workout page title
+  ///
+  /// In en, this message translates to:
+  /// **'Log Today\'s workout'**
+  String get logTodaysWorkout;
+
+  /// Create routine first message
+  ///
+  /// In en, this message translates to:
+  /// **'Create a routine first'**
+  String get createARoutineFirst;
+
+  /// Add additional exercise dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Add Additional Exercise'**
+  String get addAdditionalExercise;
+
+  /// Weight validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Enter weight'**
+  String get enterWeight;
+
+  /// Reps validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Enter reps'**
+  String get enterReps;
+
+  /// No workouts for specific day message
+  ///
+  /// In en, this message translates to:
+  /// **'No workouts logged for {day} yet.'**
+  String noWorkoutsLoggedForDay(String day);
 }
 
 class _AppLocalizationsDelegate

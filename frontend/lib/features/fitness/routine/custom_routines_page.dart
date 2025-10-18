@@ -3,67 +3,92 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/routine_models.dart';
 import '../state/routines_provider.dart';
 import 'routine_builder_page.dart';
+import '../../../l10n/app_localizations.dart';
 
 class CustomRoutinesPage extends ConsumerWidget {
   const CustomRoutinesPage({super.key});
 
   Future<void> _createRoutine(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final result = await Navigator.of(context).push<RoutinePlan>(
       MaterialPageRoute(builder: (_) => const RoutineBuilderPage()),
     );
     if (result != null) {
       ref.read(routinesProvider.notifier).add(result);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Routine saved')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.routineSaved)));
     }
   }
 
-  Future<void> _editRoutine(BuildContext context, WidgetRef ref, RoutinePlan plan) async {
+  Future<void> _editRoutine(
+    BuildContext context,
+    WidgetRef ref,
+    RoutinePlan plan,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
     final result = await Navigator.of(context).push<RoutinePlan>(
       MaterialPageRoute(builder: (_) => RoutineBuilderPage(initial: plan)),
     );
     if (result != null) {
       ref.read(routinesProvider.notifier).update(result);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Routine updated')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.routineUpdated)));
     }
   }
 
-  void _deleteRoutine(BuildContext context, WidgetRef ref, RoutinePlan plan) async {
+  void _deleteRoutine(
+    BuildContext context,
+    WidgetRef ref,
+    RoutinePlan plan,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Delete routine?'),
-        content: Text('This will remove "${plan.title}".'),
+        title: Text(l10n.deleteRoutineQuestion),
+        content: Text(l10n.deleteRoutineContent(plan.title)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.delete),
+          ),
         ],
       ),
     );
     if (ok == true) {
       ref.read(routinesProvider.notifier).remove(plan.id);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Routine deleted')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.routineDeleted)));
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final routines = ref.watch(routinesProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Custom Programs')),
+      appBar: AppBar(title: Text(l10n.customPrograms)),
       body: routines.isEmpty
           ? Center(
               child: FilledButton.icon(
                 icon: const Icon(Icons.add),
-                label: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-                  child: Text('Add New Routine', style: TextStyle(fontSize: 16)),
+                label: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                    vertical: 12.0,
+                  ),
+                  child: Text(
+                    l10n.addNewRoutine,
+                    style: const TextStyle(fontSize: 16),
+                  ),
                 ),
                 onPressed: () => _createRoutine(context, ref),
               ),
@@ -82,7 +107,7 @@ class CustomRoutinesPage extends ConsumerWidget {
           : FloatingActionButton.extended(
               onPressed: () => _createRoutine(context, ref),
               icon: const Icon(Icons.add),
-              label: const Text('Add Routine'),
+              label: Text(l10n.addRoutine),
             ),
     );
   }
@@ -137,14 +162,19 @@ class CustomRoutinesPage extends ConsumerWidget {
 // }
 
 class _RoutineCard extends StatelessWidget {
-  const _RoutineCard({required this.plan, required this.onEdit, required this.onDelete});
+  const _RoutineCard({
+    required this.plan,
+    required this.onEdit,
+    required this.onDelete,
+  });
   final RoutinePlan plan;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
-    final title = plan.title.trim().isEmpty ? '(Untitled)' : plan.title;
+    final l10n = AppLocalizations.of(context)!;
+    final title = plan.title.trim().isEmpty ? l10n.untitled : plan.title;
 
     return InkWell(
       borderRadius: BorderRadius.circular(30),
@@ -168,39 +198,36 @@ class _RoutineCard extends StatelessWidget {
             children: [
               // Left side: Routine title & exercises
               Expanded(
-                child: 
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0,top:4.0),
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Color.fromARGB(255, 207, 207, 207)
-                        ),
-                      ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0, top: 4.0),
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Color.fromARGB(255, 207, 207, 207),
                     ),
-                    // const SizedBox(height: 8),
-                    // ...plan.dayPlans.where((d) => d.exercises.isNotEmpty).map(
-                    //   (d) => Padding(
-                    //     padding: const EdgeInsets.only(bottom: 6),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Text('- ${d.label}', style: const TextStyle(fontWeight: FontWeight.w600)),
-                    //         ...d.exercises.map(
-                    //           (e) => Padding(
-                    //             padding: const EdgeInsets.only(left: 12, top: 2),
-                    //             child: Text('• ${e.name} — ${e.sets} sets, ${e.minReps}-${e.maxReps} reps'),
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                  
-                
+                  ),
+                ),
+
+                // const SizedBox(height: 8),
+                // ...plan.dayPlans.where((d) => d.exercises.isNotEmpty).map(
+                //   (d) => Padding(
+                //     padding: const EdgeInsets.only(bottom: 6),
+                //     child: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         Text('- ${d.label}', style: const TextStyle(fontWeight: FontWeight.w600)),
+                //         ...d.exercises.map(
+                //           (e) => Padding(
+                //             padding: const EdgeInsets.only(left: 12, top: 2),
+                //             child: Text('• ${e.name} — ${e.sets} sets, ${e.minReps}-${e.maxReps} reps'),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
               ),
 
               // Right side: Edit & Delete buttons
@@ -216,7 +243,11 @@ class _RoutineCard extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.edit, color: Color.fromARGB(255, 255, 255, 255), size: 20),
+                      icon: const Icon(
+                        Icons.edit,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        size: 20,
+                      ),
                       onPressed: onEdit,
                     ),
                   ),
@@ -230,7 +261,11 @@ class _RoutineCard extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.delete_outline, color: Colors.white, size: 20),
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                       onPressed: onDelete,
                     ),
                   ),

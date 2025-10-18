@@ -15,7 +15,7 @@ class FitnessHubScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     final items = <HubItem>[
       HubItem(l10n.routine, Icons.event_note, const RoutineHubPage()),
       HubItem(l10n.workout, Icons.fitness_center, const WorkoutPage()),

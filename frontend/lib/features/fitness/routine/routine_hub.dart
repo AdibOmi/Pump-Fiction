@@ -1,29 +1,32 @@
 import 'package:flutter/material.dart';
 import 'our_programs_page.dart';
 import 'custom_routines_page.dart';
+import '../../../l10n/app_localizations.dart';
 
 class RoutineHubPage extends StatelessWidget {
   const RoutineHubPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Routine')),
+      appBar: AppBar(title: Text(l10n.routine)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           _ChoiceCard(
-            title: 'Our Programs',
-            subtitle: 'Curated plans (PPL, UL, Full-body)',
+            title: l10n.ourPrograms,
+            subtitle: l10n.curatedPlansDescription,
             icon: Icons.auto_awesome,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const OurProgramsPage()),
-            ),
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const OurProgramsPage())),
           ),
           const SizedBox(height: 16),
           _ChoiceCard(
-            title: 'Custom Routines',
-            subtitle: 'Build your own weekly plan',
+            title: l10n.customRoutines,
+            subtitle: l10n.buildYourOwnWeeklyPlan,
             icon: Icons.tune,
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const CustomRoutinesPage()),
@@ -59,7 +62,11 @@ class _ChoiceCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           color: Theme.of(context).colorScheme.surface,
           boxShadow: const [
-            BoxShadow(blurRadius: 10, offset: Offset(0, 6), color: Colors.black12),
+            BoxShadow(
+              blurRadius: 10,
+              offset: Offset(0, 6),
+              color: Colors.black12,
+            ),
           ],
         ),
         child: Row(
@@ -77,14 +84,21 @@ class _ChoiceCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   const SizedBox(height: 6),
                   Text(
                     subtitle,
                     style: TextStyle(
                       fontSize: 13,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(.6),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(.6),
                     ),
                   ),
                 ],

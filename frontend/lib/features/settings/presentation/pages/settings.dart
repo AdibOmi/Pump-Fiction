@@ -21,7 +21,7 @@ class SettingsPage extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/home'); 
+            context.go('/home');
           },
         ),
       ),
@@ -37,9 +37,9 @@ class SettingsPage extends ConsumerWidget {
             title: Text(l10n.darkMode),
             value: themeMode == ThemeMode.dark,
             onChanged: (bool value) {
-              ref
-                  .read(themeModeProvider.notifier)
-                  .state = value ? ThemeMode.dark : ThemeMode.light;
+              ref.read(themeModeProvider.notifier).state = value
+                  ? ThemeMode.dark
+                  : ThemeMode.light;
             },
           ),
           const Divider(height: 32),
@@ -71,7 +71,11 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  void _showLanguageDialog(BuildContext context, WidgetRef ref, Language currentLanguage) {
+  void _showLanguageDialog(
+    BuildContext context,
+    WidgetRef ref,
+    Language currentLanguage,
+  ) {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
@@ -88,10 +92,14 @@ class SettingsPage extends ConsumerWidget {
                   style: const TextStyle(fontSize: 24),
                 ),
                 title: Text(language.name),
-                trailing: isSelected ? const Icon(Icons.check, color: Colors.green) : null,
+                trailing: isSelected
+                    ? const Icon(Icons.check, color: Colors.green)
+                    : null,
                 onTap: () {
                   if (!isSelected) {
-                    ref.read(languageProvider.notifier).changeLanguage(language.code);
+                    ref
+                        .read(languageProvider.notifier)
+                        .changeLanguage(language.code);
                   }
                   Navigator.of(context).pop();
                 },

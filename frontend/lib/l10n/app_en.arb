@@ -163,5 +163,495 @@
   "newPost": "New Post",
   "@newPost": {
     "description": "New post title"
+  },
+
+  "createRoutine": "Create Routine",
+  "@createRoutine": {
+    "description": "Create routine page title"
+  },
+
+  "routineTitle": "Routine Title",
+  "@routineTitle": {
+    "description": "Routine title input label"
+  },
+
+  "planType": "Plan Type",
+  "@planType": {
+    "description": "Plan type label"
+  },
+
+  "weekly": "Weekly",
+  "@weekly": {
+    "description": "Weekly plan type"
+  },
+
+  "numberOfDays": "Number of Days",
+  "@numberOfDays": {
+    "description": "Number of days plan type"
+  },
+
+  "days": "Days",
+  "@days": {
+    "description": "Days label"
+  },
+
+  "renameDay": "Rename Day",
+  "@renameDay": {
+    "description": "Rename day dialog title"
+  },
+
+  "dayName": "Day name",
+  "@dayName": {
+    "description": "Day name input label"
+  },
+
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+
+  "addExercise": "Add Exercise",
+  "@addExercise": {
+    "description": "Add exercise dialog title"
+  },
+
+  "exerciseName": "Exercise Name",
+  "@exerciseName": {
+    "description": "Exercise name input label"
+  },
+
+  "sets": "Sets",
+  "@sets": {
+    "description": "Sets input label"
+  },
+
+  "minReps": "Min reps",
+  "@minReps": {
+    "description": "Minimum reps input label"
+  },
+
+  "maxReps": "Max reps",
+  "@maxReps": {
+    "description": "Maximum reps input label"
+  },
+
+  "required": "Required",
+  "@required": {
+    "description": "Required field validation message"
+  },
+
+  "enterSets": "Enter sets",
+  "@enterSets": {
+    "description": "Sets validation message"
+  },
+
+  "enterMin": "Enter min",
+  "@enterMin": {
+    "description": "Min reps validation message"
+  },
+
+  "enterMax": "Enter max",
+  "@enterMax": {
+    "description": "Max reps validation message"
+  },
+
+  "maxMustBeGreaterThanMin": "Max must be >= min",
+  "@maxMustBeGreaterThanMin": {
+    "description": "Max reps validation message"
+  },
+
+  "add": "Add",
+  "@add": {
+    "description": "Add button"
+  },
+
+  "noExercisesYet": "No exercises yet",
+  "@noExercisesYet": {
+    "description": "No exercises message"
+  },
+
+  "tapToAddExercises": "Tap + to add exercises",
+  "@tapToAddExercises": {
+    "description": "Add exercises instruction"
+  },
+
+  "exercises": "Exercises",
+  "@exercises": {
+    "description": "Exercises label"
+  },
+
+  "noExercisesYetTapAddExerciseToStart": "No exercises yet. Tap 'Add exercise' to start.",
+  "@noExercisesYetTapAddExerciseToStart": {
+    "description": "No exercises instruction message"
+  },
+
+  "saveDay": "Save Day",
+  "@saveDay": {
+    "description": "Save day button"
+  },
+
+  "addExerciseButton": "Add exercise",
+  "@addExerciseButton": {
+    "description": "Add exercise button text"
+  },
+
+  "ourPrograms": "Our Programs",
+  "@ourPrograms": {
+    "description": "Our Programs page title"
+  },
+
+  "saveRoutine": "Save Routine",
+  "@saveRoutine": {
+    "description": "Save routine button"
+  },
+
+  "howManyDaysIsYourProgram": "How many days is your program (including rest days)?",
+  "@howManyDaysIsYourProgram": {
+    "description": "Number of days input hint"
+  },
+
+  "saturday": "Sat",
+  "@saturday": {
+    "description": "Saturday abbreviation"
+  },
+
+  "sunday": "Sun",
+  "@sunday": {
+    "description": "Sunday abbreviation"
+  },
+
+  "monday": "Mon",
+  "@monday": {
+    "description": "Monday abbreviation"
+  },
+
+  "tuesday": "Tue",
+  "@tuesday": {
+    "description": "Tuesday abbreviation"
+  },
+
+  "wednesday": "Wed",
+  "@wednesday": {
+    "description": "Wednesday abbreviation"
+  },
+
+  "thursday": "Thu",
+  "@thursday": {
+    "description": "Thursday abbreviation"
+  },
+
+  "friday": "Fri",
+  "@friday": {
+    "description": "Friday abbreviation"
+  },
+
+  "ourPrograms": "Our Programs",
+  "@ourPrograms": {
+    "description": "Our Programs section title"
+  },
+
+  "curatedPlansDescription": "Curated plans (PPL, UL, Full-body)",
+  "@curatedPlansDescription": {
+    "description": "Description for curated programs"
+  },
+
+  "customRoutines": "Custom Routines",
+  "@customRoutines": {
+    "description": "Custom Routines section title"
+  },
+
+  "buildYourOwnWeeklyPlan": "Build your own weekly plan",
+  "@buildYourOwnWeeklyPlan": {
+    "description": "Description for custom routines"
+  },
+
+  "customPrograms": "Custom Programs",
+  "@customPrograms": {
+    "description": "Custom Programs page title"
+  },
+
+  "addNewRoutine": "Add New Routine",
+  "@addNewRoutine": {
+    "description": "Add new routine button text"
+  },
+
+  "addRoutine": "Add Routine",
+  "@addRoutine": {
+    "description": "Add routine floating button text"
+  },
+
+  "routineSaved": "Routine saved",
+  "@routineSaved": {
+    "description": "Message when routine is saved"
+  },
+
+  "routineUpdated": "Routine updated",
+  "@routineUpdated": {
+    "description": "Message when routine is updated"
+  },
+
+  "deleteRoutineQuestion": "Delete routine?",
+  "@deleteRoutineQuestion": {
+    "description": "Delete routine confirmation title"
+  },
+
+  "deleteRoutineContent": "This will remove \"{routineName}\".",
+  "@deleteRoutineContent": {
+    "description": "Delete routine confirmation content",
+    "placeholders": {
+      "routineName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+
+  "routineDeleted": "Routine deleted",
+  "@routineDeleted": {
+    "description": "Message when routine is deleted"
+  },
+
+  "untitled": "(Untitled)",
+  "@untitled": {
+    "description": "Default name for untitled routines"
+  },
+
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+
+  "startWorkout": "Start Workout",
+  "@startWorkout": {
+    "description": "Start workout button text"
+  },
+
+  "share": "Share",
+  "@share": {
+    "description": "Share button"
+  },
+
+  "selectPhoto": "Select Photo",
+  "@selectPhoto": {
+    "description": "Select photo button"
+  },
+
+  "caption": "Caption",
+  "@caption": {
+    "description": "Caption label"
+  },
+
+  "writeACaption": "Write a caption...",
+  "@writeACaption": {
+    "description": "Caption placeholder text"
+  },
+
+  "addLocation": "Add Location",
+  "@addLocation": {
+    "description": "Add location option"
+  },
+
+  "tagPeople": "Tag People",
+  "@tagPeople": {
+    "description": "Tag people option"
+  },
+
+  "takePhoto": "Take Photo",
+  "@takePhoto": {
+    "description": "Take photo option"
+  },
+
+  "chooseFromGallery": "Choose from Gallery",
+  "@chooseFromGallery": {
+    "description": "Choose from gallery option"
+  },
+
+  "locationFeatureComingSoon": "Location feature coming soon!",
+  "@locationFeatureComingSoon": {
+    "description": "Location feature placeholder"
+  },
+
+  "tagPeopleFeatureComingSoon": "Tag people feature coming soon!",
+  "@tagPeopleFeatureComingSoon": {
+    "description": "Tag people feature placeholder"
+  },
+
+  "imageSelectedSuccessfully": "Image selected successfully!",
+  "@imageSelectedSuccessfully": {
+    "description": "Image selection success message"
+  },
+
+  "errorSelectingImage": "Error selecting image: {error}",
+  "@errorSelectingImage": {
+    "description": "Error selecting image message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "pleaseSelectAnImageFirst": "Please select an image first",
+  "@pleaseSelectAnImageFirst": {
+    "description": "No image selected error"
+  },
+
+  "postCreatedSuccessfully": "Post created successfully!",
+  "@postCreatedSuccessfully": {
+    "description": "Post creation success message"
+  },
+
+  "workoutDate": "Workout date:",
+  "@workoutDate": {
+    "description": "Workout date label"
+  },
+
+  "pickYourCurrentRoutine": "Pick your current routine",
+  "@pickYourCurrentRoutine": {
+    "description": "Routine selection text"
+  },
+
+  "whichDayAreYouTraining": "Which day are you training?",
+  "@whichDayAreYouTraining": {
+    "description": "Day selection text"
+  },
+
+  "exercises": "Exercises",
+  "@exercises": {
+    "description": "Exercises label"
+  },
+
+  "additionalExercises": "Additional exercises",
+  "@additionalExercises": {
+    "description": "Additional exercises label"
+  },
+
+  "add": "Add",
+  "@add": {
+    "description": "Add button"
+  },
+
+  "addSet": "Add Set",
+  "@addSet": {
+    "description": "Add set title"
+  },
+
+  "weight": "Weight",
+  "@weight": {
+    "description": "Weight label"
+  },
+
+  "reps": "Reps",
+  "@reps": {
+    "description": "Reps label"
+  },
+
+  "finishWorkout": "Finish Workout",
+  "@finishWorkout": {
+    "description": "Finish workout button"
+  },
+
+  "recentWorkouts": "Recent Workouts",
+  "@recentWorkouts": {
+    "description": "Recent workouts section"
+  },
+
+  "workoutLogged": "Workout Logged",
+  "@workoutLogged": {
+    "description": "Workout logged dialog title"
+  },
+
+  "close": "Close",
+  "@close": {
+    "description": "Close button"
+  },
+
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button"
+  },
+
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button"
+  },
+
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+
+  "target": "Target:",
+  "@target": {
+    "description": "Target label"
+  },
+
+  "sets": "sets",
+  "@sets": {
+    "description": "Sets unit"
+  },
+
+  "loggedSets": "Logged sets:",
+  "@loggedSets": {
+    "description": "Logged sets label"
+  },
+
+  "addSet2": "Add set",
+  "@addSet2": {
+    "description": "Add set button text"
+  },
+
+  "yourRoutineHasNoExercisesYet": "Your routine has no exercises yet.",
+  "@yourRoutineHasNoExercisesYet": {
+    "description": "No exercises message"
+  },
+
+  "logTodaysWorkout": "Log Today's workout",
+  "@logTodaysWorkout": {
+    "description": "Log workout page title"
+  },
+
+  "createARoutineFirst": "Create a routine first",
+  "@createARoutineFirst": {
+    "description": "Create routine first message"
+  },
+
+  "addAdditionalExercise": "Add Additional Exercise",
+  "@addAdditionalExercise": {
+    "description": "Add additional exercise dialog title"
+  },
+
+  "exerciseName": "Exercise name",
+  "@exerciseName": {
+    "description": "Exercise name label"
+  },
+
+  "required": "Required",
+  "@required": {
+    "description": "Required field validation"
+  },
+
+  "enterWeight": "Enter weight",
+  "@enterWeight": {
+    "description": "Weight validation message"
+  },
+
+  "enterReps": "Enter reps",
+  "@enterReps": {
+    "description": "Reps validation message"
+  },
+
+  "noWorkoutsLoggedForDay": "No workouts logged for {day} yet.",
+  "@noWorkoutsLoggedForDay": {
+    "description": "No workouts for specific day message",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
   }
 }

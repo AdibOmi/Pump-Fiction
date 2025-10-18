@@ -9,7 +9,7 @@ class CustomDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
