@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .controllers import user_controller, auth_controller, ai_chat_controller, post_controller
+from .controllers import user_controller, auth_controller, ai_chat_controller, post_controller, journal_controller
 
 router = APIRouter()
 
@@ -14,3 +14,6 @@ router.include_router(ai_chat_controller.router)
 
 # Post routes (Social media posts)
 router.include_router(post_controller.router)
+
+# Journal routes
+router.include_router(journal_controller.router)

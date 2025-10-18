@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'routine/routine_hub.dart';
 import 'workout/workout_page.dart';
 import 'nutrition/nutrition_page.dart';
-import 'progress/progress_page.dart';
 import 'widgets/section_card.dart';
 import 'models/hub_item.dart';
 import 'progress/progress_root.dart';
-
+import 'journal/presentation/pages/journal_sessions_page.dart';
 
 class FitnessHubScreen extends StatelessWidget {
   const FitnessHubScreen({super.key});
@@ -18,6 +17,7 @@ class FitnessHubScreen extends StatelessWidget {
       HubItem('Workout', Icons.fitness_center, const WorkoutPage()),
       HubItem('Nutrition', Icons.restaurant, const NutritionPage()),
       HubItem('Progress', Icons.show_chart, const ProgressRoot()),
+      HubItem('Journal', Icons.book, const JournalSessionsPage()),
     ];
 
     return Scaffold(
