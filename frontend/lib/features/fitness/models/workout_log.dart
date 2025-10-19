@@ -1,71 +1,120 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../state/workout_logs_provider.dart';
+import '../repositories/workout_log_repository.dart';
 
 /// Public provider you can watch in the UI.
 /// Usage: final logs = ref.watch(workoutLogsProvider);
 final workoutLogsProvider =
     StateNotifierProvider<WorkoutLogsNotifier, List<WorkoutLog>>(
-  (ref) => WorkoutLogsNotifier(),
+  (ref) {
+    final repository = ref.watch(workoutLogRepositoryProvider);
+    return WorkoutLogsNotifier(repository);
+  },
 );
 
-/// Manages a persisted list of [WorkoutLog]s.
-///
-/// Storage format:
-/// - SharedPreferences key [_kLogsKey] holds a JSON array of WorkoutLog objects.
+final workoutLogRepositoryProvider = Provider<WorkoutLogRepository>((ref) {
+  return WorkoutLogRepository();
+});
+
+/// Manages a persisted list of [WorkoutLog]s using backend API.
 class WorkoutLogsNotifier extends StateNotifier<List<WorkoutLog>> {
-  WorkoutLogsNotifier() : super(const []) {
+  final WorkoutLogRepository _repository;
+
+  WorkoutLogsNotifier(this._repository) : super(const []) {
     _load();
   }
 
-  static const String _kLogsKey = 'workout_logs_v1';
-
   // --------------------------- Public API ---------------------------
+
+  /// Load workout logs from backend
+  Future<void> _load() async {
+    try {
+      final logs = await _repository.getAllWorkoutLogs();
+      state = logs;
+    } catch (e) {
+      print('Error loading workout logs: $e');
+      // Keep empty state on error
+    }
+  }
+
+  /// Refresh workout logs from backend
+  Future<void> refresh() async {
+    await _load();
+  }
 
   /// Insert or replace a full workout log by its [id].
   Future<void> upsert(WorkoutLog log) async {
-    final list = [...state];
-    final i = list.indexWhere((w) => w.id == log.id);
-    if (i >= 0) {
-      list[i] = log;
-    } else {
-      list.add(log);
+    try {
+      WorkoutLog savedLog;
+      final existingIndex = state.indexWhere((w) => w.id == log.id);
+
+      if (existingIndex >= 0) {
+        // Update existing log
+        savedLog = await _repository.updateWorkoutLog(log.id, log);
+        final list = List<WorkoutLog>.from(state);
+        list[existingIndex] = savedLog;
+        _sortByDateDesc(list);
+        state = list;
+      } else {
+        // Create new log
+        savedLog = await _repository.createWorkoutLog(log);
+        final list = List<WorkoutLog>.from(state);
+        list.add(savedLog);
+        _sortByDateDesc(list);
+        state = list;
+      }
+    } catch (e) {
+      print('Error upserting workout log: $e');
+      rethrow;
     }
-    _sortByDateDesc(list);
-    state = list;
-    await _persist();
   }
 
   /// Remove a workout log by id.
   Future<void> delete(String logId) async {
-    state = [for (final w in state) if (w.id != logId) w];
-    await _persist();
+    try {
+      await _repository.deleteWorkoutLog(logId);
+      state = [for (final w in state) if (w.id != logId) w];
+    } catch (e) {
+      print('Error deleting workout log: $e');
+      rethrow;
+    }
   }
 
   /// Remove all logs (useful for debugging).
   Future<void> clearAll() async {
+    // Delete all logs from backend
+    for (final log in state) {
+      try {
+        await _repository.deleteWorkoutLog(log.id);
+      } catch (e) {
+        print('Error deleting log ${log.id}: $e');
+      }
+    }
     state = const [];
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_kLogsKey);
   }
 
   // ---- Mutating helpers for exercises/sets inside a log ----
+  // Note: These update the entire log in the backend
 
   /// Add a new [exercise] to the log with [logId].
   Future<void> addExercise(String logId, LoggedExercise exercise) async {
     final list = [...state];
     final i = list.indexWhere((w) => w.id == logId);
     if (i < 0) return;
+
     final updated = list[i].copyWith(
       exercises: [...list[i].exercises, exercise],
     );
-    list[i] = updated;
-    state = list;
-    await _persist();
+
+    try {
+      final savedLog = await _repository.updateWorkoutLog(logId, updated);
+      list[i] = savedLog;
+      state = list;
+    } catch (e) {
+      print('Error adding exercise: $e');
+      rethrow;
+    }
   }
 
   /// Replace an exercise at [exerciseIndex] in the log with [logId].
@@ -79,10 +128,18 @@ class WorkoutLogsNotifier extends StateNotifier<List<WorkoutLog>> {
     if (i < 0) return;
     final ex = [...list[i].exercises];
     if (exerciseIndex < 0 || exerciseIndex >= ex.length) return;
+
     ex[exerciseIndex] = exercise;
-    list[i] = list[i].copyWith(exercises: ex);
-    state = list;
-    await _persist();
+    final updated = list[i].copyWith(exercises: ex);
+
+    try {
+      final savedLog = await _repository.updateWorkoutLog(logId, updated);
+      list[i] = savedLog;
+      state = list;
+    } catch (e) {
+      print('Error updating exercise: $e');
+      rethrow;
+    }
   }
 
   /// Delete an exercise at [exerciseIndex] in the log with [logId].
@@ -92,10 +149,18 @@ class WorkoutLogsNotifier extends StateNotifier<List<WorkoutLog>> {
     if (i < 0) return;
     final ex = [...list[i].exercises];
     if (exerciseIndex < 0 || exerciseIndex >= ex.length) return;
+
     ex.removeAt(exerciseIndex);
-    list[i] = list[i].copyWith(exercises: ex);
-    state = list;
-    await _persist();
+    final updated = list[i].copyWith(exercises: ex);
+
+    try {
+      final savedLog = await _repository.updateWorkoutLog(logId, updated);
+      list[i] = savedLog;
+      state = list;
+    } catch (e) {
+      print('Error deleting exercise: $e');
+      rethrow;
+    }
   }
 
   /// Append a [set] to an exercise within a log.
@@ -113,9 +178,16 @@ class WorkoutLogsNotifier extends StateNotifier<List<WorkoutLog>> {
     final sets = [...ex[exerciseIndex].sets, set];
     ex[exerciseIndex] = ex[exerciseIndex].copyWith(sets: sets);
 
-    list[i] = list[i].copyWith(exercises: ex);
-    state = list;
-    await _persist();
+    final updated = list[i].copyWith(exercises: ex);
+
+    try {
+      final savedLog = await _repository.updateWorkoutLog(logId, updated);
+      list[i] = savedLog;
+      state = list;
+    } catch (e) {
+      print('Error adding set: $e');
+      rethrow;
+    }
   }
 
   /// Replace a set at [setIndex] in an exercise within a log.
@@ -136,9 +208,16 @@ class WorkoutLogsNotifier extends StateNotifier<List<WorkoutLog>> {
     sets[setIndex] = set;
 
     ex[exerciseIndex] = ex[exerciseIndex].copyWith(sets: sets);
-    list[i] = list[i].copyWith(exercises: ex);
-    state = list;
-    await _persist();
+    final updated = list[i].copyWith(exercises: ex);
+
+    try {
+      final savedLog = await _repository.updateWorkoutLog(logId, updated);
+      list[i] = savedLog;
+      state = list;
+    } catch (e) {
+      print('Error updating set: $e');
+      rethrow;
+    }
   }
 
   /// Remove a set at [setIndex] in an exercise within a log.
@@ -158,9 +237,16 @@ class WorkoutLogsNotifier extends StateNotifier<List<WorkoutLog>> {
     sets.removeAt(setIndex);
 
     ex[exerciseIndex] = ex[exerciseIndex].copyWith(sets: sets);
-    list[i] = list[i].copyWith(exercises: ex);
-    state = list;
-    await _persist();
+    final updated = list[i].copyWith(exercises: ex);
+
+    try {
+      final savedLog = await _repository.updateWorkoutLog(logId, updated);
+      list[i] = savedLog;
+      state = list;
+    } catch (e) {
+      print('Error deleting set: $e');
+      rethrow;
+    }
   }
 
   /// Change the displayed day label (e.g., "Day 1" → "Push Day").
@@ -168,44 +254,16 @@ class WorkoutLogsNotifier extends StateNotifier<List<WorkoutLog>> {
     final list = [...state];
     final i = list.indexWhere((w) => w.id == logId);
     if (i < 0) return;
-    list[i] = list[i].copyWith(dayLabel: newLabel);
-    state = list;
-    await _persist();
-  }
 
-  // -------------------------- Persistence --------------------------
+    final updated = list[i].copyWith(dayLabel: newLabel);
 
-  Future<void> _persist() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final json = jsonEncode(state.map((w) => w.toJson()).toList());
-      await prefs.setString(_kLogsKey, json);
-    } catch (e, st) {
-      if (kDebugMode) {
-        // Don't throw in production; just log for debug.
-        // ignore: avoid_print
-        print('WorkoutLogsNotifier._persist error: $e\n$st');
-      }
-    }
-  }
-
-  Future<void> _load() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final raw = prefs.getString(_kLogsKey);
-      if (raw == null) return;
-
-      final decoded = (jsonDecode(raw) as List)
-          .map((e) => WorkoutLog.fromJson(e as Map<String, dynamic>))
-          .toList();
-
-      _sortByDateDesc(decoded);
-      state = decoded;
-    } catch (e, st) {
-      if (kDebugMode) {
-        // ignore: avoid_print
-        print('WorkoutLogsNotifier._load error: $e\n$st');
-      }
+      final savedLog = await _repository.updateWorkoutLog(logId, updated);
+      list[i] = savedLog;
+      state = list;
+    } catch (e) {
+      print('Error renaming day label: $e');
+      rethrow;
     }
   }
 

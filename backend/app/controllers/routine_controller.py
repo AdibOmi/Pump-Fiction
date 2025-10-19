@@ -9,13 +9,12 @@ from ..schemas.routine_schema import (
     RoutineHeaderCreate,
     RoutineHeaderUpdate,
     RoutineHeaderResponse,
-    RoutineHeaderListResponse,
 )
 
 router = APIRouter(prefix="/routines", tags=["Routines"])
 
 
-@router.get("", response_model=List[RoutineHeaderListResponse])
+@router.get("", response_model=List[RoutineHeaderResponse])
 async def get_all_routines(
     include_archived: bool = False,
     db: Session = Depends(get_db),

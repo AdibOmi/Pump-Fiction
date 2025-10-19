@@ -27,13 +27,14 @@ class Exercise {
         maxReps: j['maxReps'] as int,
       );
 
-  // Backend JSON conversion (with position)
-  Map<String, dynamic> toBackendJson(int position) => {
+  // Backend JSON conversion (with position and day_label)
+  Map<String, dynamic> toBackendJson(int position, String dayLabel) => {
         'title': name,
         'sets': sets,
         'min_reps': minReps,
         'max_reps': maxReps,
         'position': position,
+        'day_label': dayLabel,  // NEW: Include which day this belongs to
       };
 
   factory Exercise.fromBackendJson(Map<String, dynamic> j) => Exercise(
@@ -41,6 +42,7 @@ class Exercise {
         sets: j['sets'] as int,
         minReps: j['min_reps'] as int,
         maxReps: j['max_reps'] as int,
+        // Note: day_label is used for grouping, not stored in Exercise model
       );
 }
 
@@ -118,7 +120,7 @@ class RoutinePlan {
         isArchived: j['isArchived'] as bool? ?? false,
       );
 
-  // Backend JSON conversion - collect ALL exercises from ALL days
+  // Backend JSON conversion - collect ALL exercises from ALL days with day labels
   Map<String, dynamic> toBackendJson() {
     // Collect all exercises from all day plans with their day labels
     final allExercises = <Map<String, dynamic>>[];
@@ -130,10 +132,10 @@ class RoutinePlan {
     // Build day_selected string (e.g., "Sat, Sun, Mon")
     final dayLabels = daysWithExercises.map((day) => day.label).join(', ');
 
-    // Collect all exercises from all days
+    // Collect all exercises from all days with their day label
     for (final day in dayPlans) {
       for (final exercise in day.exercises) {
-        allExercises.add(exercise.toBackendJson(position));
+        allExercises.add(exercise.toBackendJson(position, day.label));  // Pass day label!
         position++;
       }
     }
@@ -148,20 +150,51 @@ class RoutinePlan {
 
   factory RoutinePlan.fromBackendJson(Map<String, dynamic> j) {
     // Convert backend RoutineHeader to frontend RoutinePlan
-    final exercises = (j['exercises'] as List<dynamic>?)
-        ?.map((e) => Exercise.fromBackendJson(e as Map<String, dynamic>))
-        .toList() ?? [];
+    print('🔧 fromBackendJson called for: ${j['title']}');
+    print('   Raw exercises data: ${j['exercises']}');
+    
+    final exercisesJson = (j['exercises'] as List<dynamic>?) ?? [];
+    print('   Total exercises in JSON: ${exercisesJson.length}');
 
-    final dayPlan = DayPlan(
-      label: j['day_selected'] as String? ?? 'Day 1',
-      exercises: exercises,
-    );
+    // Group exercises by day_label
+    final Map<String, List<Exercise>> exercisesByDay = {};
+    
+    for (var exJson in exercisesJson) {
+      final exercise = Exercise.fromBackendJson(exJson as Map<String, dynamic>);
+      final dayLabel = exJson['day_label'] as String? ?? 'Day 1';
+      
+      print('   Exercise: ${exercise.name} -> Day: $dayLabel');
+      
+      if (!exercisesByDay.containsKey(dayLabel)) {
+        exercisesByDay[dayLabel] = [];
+      }
+      exercisesByDay[dayLabel]!.add(exercise);
+    }
+
+    print('   Grouped into ${exercisesByDay.length} days');
+
+    // Create DayPlan for each unique day_label
+    final dayPlans = exercisesByDay.entries.map((entry) {
+      print('   Creating DayPlan: ${entry.key} with ${entry.value.length} exercises');
+      return DayPlan(
+        label: entry.key,
+        exercises: entry.value,
+      );
+    }).toList();
+
+    // If no exercises, create one empty day with the day_selected label
+    if (dayPlans.isEmpty) {
+      dayPlans.add(DayPlan(
+        label: j['day_selected'] as String? ?? 'Day 1',
+        exercises: [],
+      ));
+    }
 
     return RoutinePlan(
       id: j['id']?.toString() ?? DateTime.now().microsecondsSinceEpoch.toString(),
       title: j['title'] as String,
       mode: PlanMode.nDays, // Default to nDays mode from backend
-      dayPlans: [dayPlan],
+      dayPlans: dayPlans,
       isArchived: j['is_archived'] as bool? ?? false,
     );
   }

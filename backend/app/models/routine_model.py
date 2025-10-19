@@ -32,6 +32,7 @@ class RoutineExercise(Base):
     min_reps = Column(Integer, default=1)
     max_reps = Column(Integer, default=1)
     position = Column(Integer, default=0)
+    day_label = Column(Text, default='Day 1')  # NEW: Track which day this exercise belongs to
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
 
     # Relationship

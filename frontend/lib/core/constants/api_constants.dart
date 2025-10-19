@@ -30,6 +30,15 @@ class ApiConstants {
   static String routine(String id) => '/routines/$id';
   static String routineArchive(String id) => '/routines/$id/archive';
 
+  // Workout Log endpoints
+  static const String workoutLogs = '/workout-logs';
+  static const String workoutLogsList = '/workout-logs/list';
+  static String workoutLog(String id) => '/workout-logs/$id';
+  static String workoutLogsByDateRange(String startDate, String endDate) =>
+      '/workout-logs/date-range?start_date=$startDate&end_date=$endDate';
+  static String exerciseHistory(String exerciseName) => '/workout-logs/exercise/$exerciseName/history';
+  static const String workoutStats = '/workout-logs/stats/summary';
+
   // Headers
   static const String contentType = 'application/json';
   static const String authorization = 'Authorization';
