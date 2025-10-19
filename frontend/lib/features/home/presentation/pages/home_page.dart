@@ -180,92 +180,92 @@ class HomePage extends ConsumerWidget {
               const SizedBox(height: 20),
 
               // Primary CTA
-              Card(
-                elevation: 1,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Ready for your next workout?', style: theme.textTheme.bodyMedium),
-                            const SizedBox(height: 8),
-                            ElevatedButton(
-                              onPressed: () {
-                                // TODO: wire to routine picker
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFFF8383),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                                child: Text('Start Workout', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      OutlinedButton(
-                        onPressed: () {},
-                        child: const Text('Quick Log'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // Card(
+              //   elevation: 1,
+              //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(12.0),
+              //     child: Row(
+              //       children: [
+              //         Expanded(
+              //           child: Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               Text('Ready for your next workout?', style: theme.textTheme.bodyMedium),
+              //               const SizedBox(height: 8),
+              //               ElevatedButton(
+              //                 onPressed: () {
+              //                   // TODO: wire to routine picker
+              //                 },
+              //                 style: ElevatedButton.styleFrom(
+              //                   backgroundColor: const Color(0xFFFF8383),
+              //                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              //                 ),
+              //                 child: const Padding(
+              //                   padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              //                   child: Text('Start Workout', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              //                 ),
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //         const SizedBox(width: 12),
+              //         OutlinedButton(
+              //           onPressed: () {},
+              //           child: const Text('Quick Log'),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
 
               const SizedBox(height: 18),
 
               // Recent Activity
-              Text('Recent activity', style: theme.textTheme.titleMedium),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 120,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 3,
-                  separatorBuilder: (_, __) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) {
-                    return Card(
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      child: Container(
-                        width: 220,
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Workout ${index + 1}', style: theme.textTheme.titleSmall),
-                            const SizedBox(height: 6),
-                            Text('Legs • 45 min', style: theme.textTheme.bodySmall),
-                            const Spacer(),
-                            LinearProgressIndicator(value: (index + 1) * 0.25),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+              // Text('Recent activity', style: theme.textTheme.titleMedium),
+              // const SizedBox(height: 8),
+              // SizedBox(
+              //   height: 120,
+              //   child: ListView.separated(
+              //     scrollDirection: Axis.horizontal,
+              //     itemCount: 3,
+              //     separatorBuilder: (_, __) => const SizedBox(width: 12),
+              //     itemBuilder: (context, index) {
+              //       return Card(
+              //         elevation: 2,
+              //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              //         child: Container(
+              //           width: 220,
+              //           padding: const EdgeInsets.all(12),
+              //           child: Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               Text('Workout ${index + 1}', style: theme.textTheme.titleSmall),
+              //               const SizedBox(height: 6),
+              //               Text('Legs • 45 min', style: theme.textTheme.bodySmall),
+              //               const Spacer(),
+              //               LinearProgressIndicator(value: (index + 1) * 0.25),
+              //             ],
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //   ),
+              // ),
 
               const SizedBox(height: 18),
 
               // Quick Actions (minimal)
-              Text('Shortcuts', style: theme.textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _shortcutButton(context, Icons.fitness_center, 'New Routine'),
-                  _shortcutButton(context, Icons.add, 'Add Exercise'),
-                  _shortcutButton(context, Icons.chat_bubble_outline, 'Coach'),
-                ],
-              ),
+              // Text('Shortcuts', style: theme.textTheme.titleMedium),
+              // const SizedBox(height: 8),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     _shortcutButton(context, Icons.fitness_center, 'New Routine'),
+              //     _shortcutButton(context, Icons.add, 'Add Exercise'),
+              //     _shortcutButton(context, Icons.chat_bubble_outline, 'Coach'),
+              //   ],
+              // ),
 
               const SizedBox(height: 18),
 
@@ -296,27 +296,6 @@ class HomePage extends ConsumerWidget {
               ),
 
               const SizedBox(height: 18),
-
-              // Notifications & Tips
-              Text('Notifications & Tips', style: theme.textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Card(
-                elevation: 1,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: Column(
-                  children: const [
-                    ListTile(
-                      leading: Icon(Icons.info_outline),
-                      title: Text('Try the new 4-week strength plan'),
-                    ),
-                    Divider(height: 1),
-                    ListTile(
-                      leading: Icon(Icons.message_outlined),
-                      title: Text('Don\'t forget to log your meals today'),
-                    ),
-                  ],
-                ),
-              ),
 
               const SizedBox(height: 40),
             ],
