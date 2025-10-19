@@ -44,7 +44,7 @@ class AuthNotifier extends _$AuthNotifier {
     return await repository.getCurrentUser();
   }
 
-  Future<void> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     state = const AsyncLoading();
 
     try {
@@ -54,13 +54,16 @@ class AuthNotifier extends _$AuthNotifier {
 
       if (response.message != null) {
         // Email confirmation required
-        throw Exception(response.message!);
+        state = AsyncError(Exception(response.message!), StackTrace.current);
+        return false;
       }
 
       state = AsyncData(response.user);
+      return true;
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
-      rethrow;
+      // Do not rethrow so callers can handle UI without triggering external retries
+      return false;
     }
   }
 

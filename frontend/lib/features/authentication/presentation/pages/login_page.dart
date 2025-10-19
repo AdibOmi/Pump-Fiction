@@ -49,25 +49,34 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     setState(() => isSubmitting = true);
     try {
-      await ref.read(authNotifierProvider.notifier).login(email, password);
+      final success = await ref.read(authNotifierProvider.notifier).login(email, password);
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login successful!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        context.go('/home');
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login failed: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
+      if (success) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login successful!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          context.go('/home');
+        }
+      } else {
+        // Show a friendly error and allow the user to try again without any automatic retries
+        if (mounted) {
+          // Prefer to read the current provider state for a specific error message if available
+          final authState = ref.read(authNotifierProvider);
+          String message = 'Login failed. Please check your credentials and try again.';
+          if (authState is AsyncError) {
+            message = authState.error.toString();
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } finally {
       if (mounted) setState(() => isSubmitting = false);
@@ -76,10 +85,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-  // Use local submitting flag so initial provider build/loading doesn't
-  // keep the login button disabled.
+  final size = MediaQuery.of(context).size;
   final isLoading = isSubmitting;
 
   return Scaffold(
