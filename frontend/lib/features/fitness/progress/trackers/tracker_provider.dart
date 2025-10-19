@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'tracker_models.dart';
+import 'tracker_repository.dart';
 
 final trackersProvider =
     StateNotifierProvider<TrackersNotifier, List<Tracker>>(
@@ -8,48 +8,75 @@ final trackersProvider =
 );
 
 class TrackersNotifier extends StateNotifier<List<Tracker>> {
-  TrackersNotifier() : super(const []) {
+  final TrackerRepository _repository;
+
+  TrackersNotifier({TrackerRepository? repository})
+      : _repository = repository ?? TrackerRepository(),
+        super(const []) {
     _load();
   }
-
-  static const _kKey = 'custom_trackers_v1';
 
   Future<void> addTracker({
     required String name,
     required String unit,
     double? goal,
   }) async {
-    final t = Tracker(
-      id: _makeId(),
-      name: name,
-      unit: unit,
-      goal: goal,
-      entries: [],
-    );
-    state = [t, ...state];
-    await _persist();
+    try {
+      final tracker = await _repository.createTracker(
+        name: name,
+        unit: unit,
+        goal: goal,
+      );
+      // Create a new list to ensure Riverpod detects the change
+      final updatedList = List<Tracker>.from(state);
+      updatedList.insert(0, tracker);
+      state = updatedList;
+      print('✅ Tracker added successfully: ${tracker.name}');
+    } catch (e) {
+      print('❌ Error adding tracker: $e');
+      rethrow;
+    }
   }
 
   Future<void> updateTracker(Tracker updated) async {
-    state = [
-      for (final t in state) if (t.id == updated.id) updated else t,
-    ];
-    await _persist();
+    try {
+      final tracker = await _repository.updateTracker(updated);
+      // Create a new list to ensure Riverpod detects the change
+      final updatedList = state.map((t) => t.id == tracker.id ? tracker : t).toList();
+      state = updatedList;
+      print('✅ Tracker updated successfully: ${tracker.name}');
+    } catch (e) {
+      print('❌ Error updating tracker: $e');
+      rethrow;
+    }
   }
 
   Future<void> deleteTracker(String id) async {
-    state = [for (final t in state) if (t.id != id) t];
-    await _persist();
+    try {
+      await _repository.deleteTracker(id);
+      // Create a new list to ensure Riverpod detects the change
+      final updatedList = state.where((t) => t.id != id).toList();
+      state = updatedList;
+      print('✅ Tracker deleted successfully');
+    } catch (e) {
+      print('❌ Error deleting tracker: $e');
+      rethrow;
+    }
   }
 
   Future<void> addEntry(String trackerId, TrackerEntry entry) async {
-    final list = [...state];
-    final i = list.indexWhere((t) => t.id == trackerId);
-    if (i < 0) return;
-    list[i].entries.add(entry);
-    list[i].entries.sort((a, b) => b.date.compareTo(a.date)); // newest first
-    state = list;
-    await _persist();
+    try {
+      final savedEntry = await _repository.addEntry(trackerId, entry);
+      final list = [...state];
+      final i = list.indexWhere((t) => t.id == trackerId);
+      if (i < 0) return;
+      list[i].entries.add(savedEntry);
+      list[i].entries.sort((a, b) => b.date.compareTo(a.date)); // newest first
+      state = list;
+    } catch (e) {
+      print('Error adding entry: $e');
+      rethrow;
+    }
   }
 
   Future<void> updateEntry(
@@ -57,53 +84,61 @@ class TrackersNotifier extends StateNotifier<List<Tracker>> {
     int index,
     TrackerEntry entry,
   ) async {
-    final list = [...state];
-    final i = list.indexWhere((t) => t.id == trackerId);
-    if (i < 0) return;
-    if (index < 0 || index >= list[i].entries.length) return;
-    list[i].entries[index] = entry;
-    list[i].entries.sort((a, b) => b.date.compareTo(a.date));
-    state = list;
-    await _persist();
+    try {
+      final list = [...state];
+      final i = list.indexWhere((t) => t.id == trackerId);
+      if (i < 0) return;
+      if (index < 0 || index >= list[i].entries.length) return;
+
+      final entryId = list[i].entries[index].id;
+      if (entryId == null) return;
+
+      final updatedEntry = await _repository.updateEntry(trackerId, entryId, entry);
+      list[i].entries[index] = updatedEntry;
+      list[i].entries.sort((a, b) => b.date.compareTo(a.date));
+      state = list;
+    } catch (e) {
+      print('Error updating entry: $e');
+      rethrow;
+    }
   }
 
   Future<void> deleteEntry(String trackerId, int index) async {
-    final list = [...state];
-    final i = list.indexWhere((t) => t.id == trackerId);
-    if (i < 0) return;
-    if (index < 0 || index >= list[i].entries.length) return;
-    list[i].entries.removeAt(index);
-    state = list;
-    await _persist();
-  }
+    try {
+      final list = [...state];
+      final i = list.indexWhere((t) => t.id == trackerId);
+      if (i < 0) return;
+      if (index < 0 || index >= list[i].entries.length) return;
 
-  Future<void> clearAll() async {
-    state = const [];
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_kKey);
-  }
+      final entryId = list[i].entries[index].id;
+      if (entryId == null) return;
 
-  Future<void> _persist() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_kKey, Tracker.encodeList(state));
+      await _repository.deleteEntry(trackerId, entryId);
+      list[i].entries.removeAt(index);
+      state = list;
+    } catch (e) {
+      print('Error deleting entry: $e');
+      rethrow;
+    }
   }
 
   Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_kKey);
-    if (raw == null) return;
-    final list = Tracker.decodeList(raw);
-    // ensure newest-first for entries
-    for (final t in list) {
-      t.entries.sort((a, b) => b.date.compareTo(a.date));
+    try {
+      final trackers = await _repository.getTrackers();
+      // ensure newest-first for entries
+      for (final t in trackers) {
+        t.entries.sort((a, b) => b.date.compareTo(a.date));
+      }
+      state = trackers;
+    } catch (e) {
+      print('Error loading trackers: $e');
+      // Keep empty state on error
+      state = const [];
     }
-    state = list;
   }
 
-  String _makeId() {
-    final d = DateTime.now();
-    String two(int n) => n.toString().padLeft(2, '0');
-    String six(int n) => n.toString().padLeft(6, '0');
-    return 'trk_${d.year}-${two(d.month)}-${two(d.day)}_${two(d.hour)}${two(d.minute)}${two(d.second)}_${six(d.microsecond)}';
+  /// Refresh trackers from server
+  Future<void> refresh() async {
+    await _load();
   }
 }

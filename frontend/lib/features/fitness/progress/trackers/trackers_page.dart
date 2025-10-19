@@ -116,24 +116,34 @@ class TrackersPage extends ConsumerWidget {
               final unit = unitCtrl.text.trim();
               final goal = (goalCtrl.text.trim().isEmpty) ? null : double.tryParse(goalCtrl.text.trim());
 
-              if (isEdit) {
-                final updated = Tracker(
-                  id: tracker!.id,
-                  name: name,
-                  unit: unit,
-                  goal: goal,
-                  entries: tracker.entries,
+              try {
+                if (isEdit) {
+                  final updated = Tracker(
+                    id: tracker!.id,
+                    name: name,
+                    unit: unit,
+                    goal: goal,
+                    entries: tracker.entries,
+                  );
+                  await ref.read(trackersProvider.notifier).updateTracker(updated);
+                } else {
+                  await ref.read(trackersProvider.notifier).addTracker(
+                        name: name,
+                        unit: unit,
+                        goal: goal,
+                      );
+                }
+                // ignore: use_build_context_synchronously
+                Navigator.pop(context);
+              } catch (e) {
+                // ignore: use_build_context_synchronously
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: ${e.toString()}'),
+                    backgroundColor: Colors.red,
+                  ),
                 );
-                await ref.read(trackersProvider.notifier).updateTracker(updated);
-              } else {
-                await ref.read(trackersProvider.notifier).addTracker(
-                      name: name,
-                      unit: unit,
-                      goal: goal,
-                    );
               }
-              // ignore: use_build_context_synchronously
-              Navigator.pop(context);
             },
             child: Text(isEdit ? 'Save' : 'Add'),
           ),

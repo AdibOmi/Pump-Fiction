@@ -24,6 +24,10 @@ def _make_sync_db_url(url: str) -> str:
 
 # Sync engine and session for sync operations used across most of the app
 sync_database_url = _make_sync_db_url(settings.DATABASE_URL)
+# Sync engine and session for sync operations
+# Convert async driver to sync driver
+sync_database_url = settings.DATABASE_URL.replace('postgresql+psycopg_async', 'postgresql+psycopg')
+sync_database_url = sync_database_url.replace('+aiosqlite', '')  # For SQLite compatibility
 sync_engine = create_engine(sync_database_url, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=sync_engine)
 

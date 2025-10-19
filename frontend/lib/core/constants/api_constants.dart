@@ -18,6 +18,18 @@ class ApiConstants {
   // User Profile endpoints
   static const String userProfile = '/users/me/profile';
 
+  // Tracker endpoints
+  static const String trackers = '/trackers';
+  static const String trackersList = '/trackers/list';
+  static String tracker(int id) => '/trackers/$id';
+  static String trackerEntries(int trackerId) => '/trackers/$trackerId/entries';
+  static String trackerEntry(int trackerId, int entryId) => '/trackers/$trackerId/entries/$entryId';
+
+  // Routine endpoints
+  static const String routines = '/routines';
+  static String routine(String id) => '/routines/$id';
+  static String routineArchive(String id) => '/routines/$id/archive';
+
   // Headers
   static const String contentType = 'application/json';
   static const String authorization = 'Authorization';
