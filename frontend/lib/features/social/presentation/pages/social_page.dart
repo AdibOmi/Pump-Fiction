@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/custom_app_bar.dart';
-import '../../../../core/widgets/custom_drawer.dart';
 import 'create_post_page.dart';
 import '../../../../l10n/app_localizations.dart';
 
@@ -157,7 +156,6 @@ class _SocialPageState extends State<SocialPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
-      drawer: const CustomDrawer(),
       body: IndexedStack(
         index: _selectedIndex == 3 ? 2 : _selectedIndex,
         children: _pages,

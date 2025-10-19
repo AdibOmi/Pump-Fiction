@@ -11,13 +11,18 @@ class RoutineRepository {
   /// Get all routines for the current user
   Future<List<RoutinePlan>> getAllRoutines({bool includeArchived = false}) async {
     try {
-      print('📥 Fetching routines from backend...');
+      print('📥 RoutineRepository: Fetching routines from ${ApiConstants.routines}...');
+      print('   Include archived: $includeArchived');
+
       final response = await _apiClient.get(
         ApiConstants.routines,
         queryParameters: {'include_archived': includeArchived},
       );
 
-      print('📦 Backend response received: ${response.data}');
+      print('📦 RoutineRepository: Backend response received');
+      print('   Status code: ${response.statusCode}');
+      print('   Data type: ${response.data.runtimeType}');
+      print('   Data: ${response.data}');
 
       if (response.data is List) {
         final routines = (response.data as List)

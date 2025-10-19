@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'routine/routine_hub.dart';
+import 'routine/custom_routines_page.dart';
 import 'workout/workout_page.dart';
-import 'nutrition/nutrition_page.dart';
-import 'progress/progress_page.dart';
 import 'widgets/section_card.dart';
 import 'models/hub_item.dart';
 import 'progress/progress_root.dart';
 import '../../l10n/app_localizations.dart';
-import 'journal/presentation/pages/journal_sessions_page.dart';
-
-import '../../core/widgets/custom_app_bar.dart';
 
 class FitnessHubScreen extends StatelessWidget {
   const FitnessHubScreen({super.key});
@@ -19,11 +14,9 @@ class FitnessHubScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     final items = <HubItem>[
-      HubItem(l10n.routine, Icons.event_note, const RoutineHubPage()),
+      HubItem(l10n.routine, Icons.event_note, const CustomRoutinesPage()),
       HubItem(l10n.workout, Icons.fitness_center, const WorkoutPage()),
-      HubItem(l10n.nutrition, Icons.restaurant, const NutritionPage()),
       HubItem(l10n.progress, Icons.show_chart, const ProgressRoot()),
-      HubItem('Journal', Icons.book, const JournalSessionsPage()),
     ];
 
     return Scaffold(

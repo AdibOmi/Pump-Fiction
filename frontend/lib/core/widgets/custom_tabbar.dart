@@ -18,9 +18,9 @@ class MainTabScaffold extends StatelessWidget {
 
     if (currentLocation.startsWith('/fitness'))
       currentIndex = 1;
-    else if (currentLocation.startsWith('/social'))
-      currentIndex = 2;
     else if (currentLocation.startsWith('/chat'))
+      currentIndex = 2;
+    else if (currentLocation.startsWith('/profile'))
       currentIndex = 3;
 
     return Scaffold(
@@ -36,10 +36,10 @@ class MainTabScaffold extends StatelessWidget {
               context.go('/fitness');
               break;
             case 2:
-              context.go('/social');
+              context.go('/chat');
               break;
             case 3:
-              context.go('/chat');
+              context.go('/profile');
               break;
           }
         },
@@ -55,14 +55,14 @@ class MainTabScaffold extends StatelessWidget {
             label: l10n.fitness,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.groups_outlined),
-            activeIcon: const Icon(Icons.groups),
-            label: l10n.social,
-          ),
-          BottomNavigationBarItem(
             icon: const Icon(Icons.chat_outlined),
             activeIcon: const Icon(Icons.chat),
             label: l10n.chat,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person_outlined),
+            activeIcon: const Icon(Icons.person),
+            label: l10n.profile,
           ),
         ],
       ),

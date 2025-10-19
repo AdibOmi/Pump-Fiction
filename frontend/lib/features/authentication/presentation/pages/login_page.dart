@@ -59,7 +59,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               backgroundColor: Colors.green,
             ),
           );
-          context.go('/home');
+          context.go('/loading');
         }
       } else {
         // Show a friendly error and allow the user to try again without any automatic retries

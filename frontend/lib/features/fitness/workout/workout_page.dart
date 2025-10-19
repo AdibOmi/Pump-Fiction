@@ -41,11 +41,15 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('💪 WorkoutPage: Building workout page...');
     final routines = ref.watch(routinesProvider);
+    print('💪 WorkoutPage: Routines loaded: ${routines.length}');
+
     final notifier = ref.read(routinesProvider.notifier);
     final allLogs = ref.watch(workoutLogsProvider);
 
     if (routines.isEmpty) {
+      print('💪 WorkoutPage: No routines found!');
       return Scaffold(
         appBar: AppBar(title: const Text('Workout')),
         body: Center(
@@ -59,18 +63,69 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
       );
     }
 
-    final selected = routines.firstWhere(
+    // Find the selected routine, or default to first routine with exercises
+    var selected = routines.firstWhere(
       (r) => r.id == (_selectedRoutineId ?? notifier.currentRoutineId),
       orElse: () => routines.first,
     );
 
-    final days = selected.dayPlans.where((d) => d.exercises.isNotEmpty).toList();
-    if (days.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Workout')),
-        body: const Center(child: Text('Your routine has no exercises yet.')),
-      );
+    // Check if selected routine has exercises, if not find one that does
+    var selectedDays = selected.dayPlans.where((d) => d.exercises.isNotEmpty).toList();
+
+    if (selectedDays.isEmpty) {
+      print('💪 WorkoutPage: Selected routine "${selected.title}" has no exercises, finding one with exercises...');
+
+      // Find first routine with exercises
+      try {
+        selected = routines.firstWhere(
+          (r) => r.dayPlans.any((d) => d.exercises.isNotEmpty),
+        );
+        print('💪 WorkoutPage: Found routine with exercises: ${selected.title}');
+
+        // Update the selected routine ID
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            _selectedRoutineId = selected.id;
+          });
+          notifier.setCurrent(selected.id);
+        });
+      } catch (e) {
+        // No routines with exercises found
+        print('💪 WorkoutPage: No routines with exercises found!');
+        return Scaffold(
+          appBar: AppBar(title: const Text('Workout')),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'All your routines are empty.',
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const CustomRoutinesPage()),
+                  ),
+                  child: const Text('Add exercises to a routine'),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
     }
+
+    print('💪 WorkoutPage: Selected routine: ${selected.title}');
+    print('💪 WorkoutPage: Total day plans in routine: ${selected.dayPlans.length}');
+
+    for (var i = 0; i < selected.dayPlans.length; i++) {
+      print('💪   Day ${i}: ${selected.dayPlans[i].label} - ${selected.dayPlans[i].exercises.length} exercises');
+    }
+
+    final days = selected.dayPlans.where((d) => d.exercises.isNotEmpty).toList();
+    print('💪 WorkoutPage: Days with exercises: ${days.length}');
+    print('💪 WorkoutPage: Showing workout UI with ${days.length} days');
     final currentDay = days[_selectedDayIdx];
 
     // FILTER: show only logs for the currently selected day
@@ -612,21 +667,30 @@ class _WorkoutLogCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  formatDate(log.date),
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                Expanded(
+                  child: Text(
+                    formatDate(log.date),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextButton.icon(
+                    IconButton(
                       onPressed: onEdit,
-                      icon: const Icon(Icons.edit, size: 18),
-                      label: const Text('Edit'),
+                      icon: const Icon(Icons.edit, size: 20),
+                      tooltip: 'Edit',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                     ),
-                    TextButton.icon(
+                    const SizedBox(width: 4),
+                    IconButton(
                       onPressed: onDelete,
-                      icon: const Icon(Icons.delete_outline, size: 18),
-                      label: const Text('Delete'),
+                      icon: const Icon(Icons.delete_outline, size: 20),
+                      tooltip: 'Delete',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),
