@@ -32,12 +32,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
       elevation: 10,
-      leading: Builder(
-        builder: (context) => IconButton(
-          icon: Icon(Icons.menu, color: isLight ? Colors.black87 : Colors.white),
-          onPressed: () => Scaffold.of(context).openDrawer(),
-        ),
-      ),
       centerTitle: true,
       title: Column(
         // MainAxisAlignment: MainAxisAlignment.center,

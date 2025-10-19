@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python -m uvicorn app.main:app --reload --port 8000)"
+      "Bash(python -m uvicorn app.main:app --reload --port 8000)",
+      "Bash(python test_routine_query.py:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

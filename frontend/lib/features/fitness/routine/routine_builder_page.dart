@@ -244,20 +244,6 @@ class _RoutineBuilderPageState extends State<RoutineBuilderPage> {
     );
   }
 
-  final Set<String> _savedDays = {}; // top of your State class
-
-  void _saveDay(DayPlan day) {
-    setState(() {
-      _savedDays.add(day.label);
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${day.label} saved successfully ✅'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   void _saveRoutineAndClose() {
     final plan = _plan.copyWith(title: _titleCtrl.text.trim(), mode: _mode);
     // ✅ Return the plan to previous screen & close
@@ -394,15 +380,6 @@ class _RoutineBuilderPageState extends State<RoutineBuilderPage> {
               ],
             ),
 
-          const SizedBox(height: 16),
-          Align(
-            alignment: Alignment.centerRight,
-            child: OutlinedButton.icon(
-              onPressed: () => _saveDay(currentDay),
-              icon: const Icon(Icons.check),
-              label: Text(l10n.saveDay),
-            ),
-          ),
           const SizedBox(height: 24),
         ],
       ),
