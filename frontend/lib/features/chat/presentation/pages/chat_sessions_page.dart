@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../providers/chat_providers.dart';
 import 'chat_screen_page.dart';
+import '../../../../core/widgets/custom_app_bar.dart';
 
 class ChatSessionsPage extends ConsumerStatefulWidget {
   const ChatSessionsPage({super.key});
@@ -58,29 +59,30 @@ class _ChatSessionsPageState extends ConsumerState<ChatSessionsPage> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: theme.appBarTheme.backgroundColor,
-        elevation: 0,
-        title: Text(
-          'AI Fitness Coach',
-          style: TextStyle(
-            color: colorScheme.onSurface,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/chat');
-            }
-          },
-        ),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: theme.appBarTheme.backgroundColor,
+      //   elevation: 0,
+      //   title: Text(
+      //     'AI Fitness Coach',
+      //     style: TextStyle(
+      //       color: colorScheme.onSurface,
+      //       fontSize: 20,
+      //       fontWeight: FontWeight.bold,
+      //     ),
+      //   ),
+      //   centerTitle: true,
+      //   leading: IconButton(
+      //     icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+      //     onPressed: () {
+      //       if (context.canPop()) {
+      //         context.pop();
+      //       } else {
+      //         context.go('/chat');
+      //       }
+      //     },
+      //   ),
+      // ),
+      appBar:   CustomAppBar(),
       body: sessionsAsync.when(
         data: (sessions) {
           if (sessions.isEmpty) {

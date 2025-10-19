@@ -80,65 +80,66 @@ class _ChatScreenPageState extends ConsumerState<ChatScreenPage> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: theme.appBarTheme.backgroundColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/chat');
-            }
-          },
-        ),
-        title: sessionAsync.when(
-          data: (session) => session != null
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      session.title,
-                      style: TextStyle(
-                        color: colorScheme.onSurface,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'AI Fitness Coach',
-                      style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.6),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                )
-              : Text(
-                  'Chat',
-                  style: TextStyle(color: colorScheme.onSurface),
-                ),
-          loading: () => Text(
-            'Loading...',
-            style: TextStyle(color: colorScheme.onSurface),
-          ),
-          error: (_, __) => Text(
-            'Error',
-            style: TextStyle(color: colorScheme.onSurface),
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh, color: colorScheme.onSurface),
-            onPressed: () {
-              ref
-                  .read(currentChatSessionProvider(widget.sessionId).notifier)
-                  .refresh();
-            },
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: theme.appBarTheme.backgroundColor,
+      //   elevation: 0,
+      //   leading: IconButton(
+      //     icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
+      //     onPressed: () {
+      //       if (context.canPop()) {
+      //         context.pop();
+      //       } else {
+      //         context.go('/chat');
+      //       }
+      //     },
+      //   ),
+      //   title: sessionAsync.when(
+      //     data: (session) => session != null
+      //         ? Column(
+      //             crossAxisAlignment: CrossAxisAlignment.start,
+      //             children: [
+      //               Text(
+      //                 session.title,
+      //                 style: TextStyle(
+      //                   color: colorScheme.onSurface,
+      //                   fontSize: 16,
+      //                   fontWeight: FontWeight.bold,
+      //                 ),
+      //               ),
+      //               Text(
+      //                 'AI Fitness Coach',
+      //                 style: TextStyle(
+      //                   color: colorScheme.onSurface.withOpacity(0.6),
+      //                   fontSize: 12,
+      //                 ),
+      //               ),
+      //             ],
+      //           )
+      //         : Text(
+      //             'Chat',
+      //             style: TextStyle(color: colorScheme.onSurface),
+      //           ),
+      //     loading: () => Text(
+      //       'Loading...',
+      //       style: TextStyle(color: colorScheme.onSurface),
+      //     ),
+      //     error: (_, __) => Text(
+      //       'Error',
+      //       style: TextStyle(color: colorScheme.onSurface),
+      //     ),
+      //   ),
+      //   actions: [
+      //     IconButton(
+      //       icon: Icon(Icons.refresh, color: colorScheme.onSurface),
+      //       onPressed: () {
+      //         ref
+      //             .read(currentChatSessionProvider(widget.sessionId).notifier)
+      //             .refresh();
+      //       },
+      //     ),
+      //   ],
+      // ),
+      appBar: CustomAppBar(),
       body: Column(
         children: [
           Expanded(

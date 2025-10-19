@@ -14,13 +14,12 @@ import '../../features/fitness/fitness_hub.dart';
 
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/',
   routes: [
     // Pages without bottom tab bar
     GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
     GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
-    GoRoute(path: '/profile', builder: (context, state) => const ProfilePage()),
     GoRoute(path: '/marketplace', builder: (context, state) => const MarketplacePage()),
     GoRoute(path: '/settings', builder: (context, state) => const SettingsPage()),
 
@@ -33,8 +32,8 @@ final GoRouter appRouter = GoRouter(
       routes: [
         GoRoute(path: '/home', builder: (context, state) => const HomePage()),
         GoRoute(path: '/fitness', builder: (context, state) => const FitnessHubScreen()),
-        GoRoute(path: '/social', builder: (context, state) => const SocialPage()),
         GoRoute(path: '/chat', builder: (context, state) => const ChatPage()),
+        GoRoute(path: '/profile', builder: (context, state) => const ProfilePage()),
       ],
     ),
   ],

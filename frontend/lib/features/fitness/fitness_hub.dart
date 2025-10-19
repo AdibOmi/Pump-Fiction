@@ -10,6 +10,7 @@ import '../../l10n/app_localizations.dart';
 import 'journal/presentation/pages/journal_sessions_page.dart';
 
 import '../../core/widgets/custom_app_bar.dart';
+import 'routine/custom_routines_page.dart';
 
 class FitnessHubScreen extends StatelessWidget {
   const FitnessHubScreen({super.key});
@@ -19,15 +20,15 @@ class FitnessHubScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     final items = <HubItem>[
-      HubItem(l10n.routine, Icons.event_note, const RoutineHubPage()),
+      HubItem(l10n.routine, Icons.event_note, const CustomRoutinesPage()),
       HubItem(l10n.workout, Icons.fitness_center, const WorkoutPage()),
       HubItem(l10n.nutrition, Icons.restaurant, const NutritionPage()),
       HubItem(l10n.progress, Icons.show_chart, const ProgressRoot()),
-      HubItem('Journal', Icons.book, const JournalSessionsPage()),
+      //HubItem('Journal', Icons.book, const JournalSessionsPage()),
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.fitness)),
+      appBar: CustomAppBar(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),

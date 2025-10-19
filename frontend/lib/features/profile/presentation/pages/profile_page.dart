@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/models/user_profile_model.dart';
 import '../providers/profile_providers.dart';
+import '../../../../core/widgets/custom_app_bar.dart';
+
 
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
@@ -147,6 +149,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final profileAsync = ref.watch(userProfileProvider);
 
     return Scaffold(
+      //appBar: CustomAppBar(),
       body: Stack(
         children: [
           // Background image
@@ -396,7 +399,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
           // Profile image with edit icon
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.15,
+            top: MediaQuery.of(context).size.height * 0.10,
             left: 0,
             right: 0,
             child: Center(
