@@ -11,15 +11,26 @@ class RoutineRepository {
   /// Get all routines for the current user
   Future<List<RoutinePlan>> getAllRoutines({bool includeArchived = false}) async {
     try {
+      print('📥 Fetching routines from backend...');
       final response = await _apiClient.get(
         ApiConstants.routines,
         queryParameters: {'include_archived': includeArchived},
       );
 
+      print('📦 Backend response received: ${response.data}');
+
       if (response.data is List) {
-        return (response.data as List)
-            .map((json) => RoutinePlan.fromBackendJson(json as Map<String, dynamic>))
+        final routines = (response.data as List)
+            .map((json) {
+              print('🔍 Parsing routine: ${json['title']}');
+              print('   Exercises in response: ${json['exercises']?.length ?? 0}');
+              final routine = RoutinePlan.fromBackendJson(json as Map<String, dynamic>);
+              print('   Exercises after parsing: ${routine.dayPlans.first.exercises.length}');
+              return routine;
+            })
             .toList();
+        print('✅ Total routines loaded: ${routines.length}');
+        return routines;
       }
       return [];
     } on DioException catch (e) {

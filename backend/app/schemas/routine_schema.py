@@ -11,6 +11,7 @@ class RoutineExerciseBase(BaseModel):
     min_reps: int = Field(default=1, ge=1)
     max_reps: int = Field(default=1, ge=1)
     position: int = Field(default=0, ge=0)
+    day_label: str = Field(default='Day 1')  # NEW: Track which day this exercise belongs to
 
 
 class RoutineExerciseCreate(RoutineExerciseBase):
