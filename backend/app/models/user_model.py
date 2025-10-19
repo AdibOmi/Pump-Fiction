@@ -16,3 +16,4 @@ class User(Base):
     profile = relationship("UserProfile", back_populates="user", uselist=False)
     trackers = relationship("Tracker", back_populates="user")
     routines = relationship("RoutineHeader", back_populates="user")
+    workout_logs = relationship("WorkoutLog", back_populates="user")

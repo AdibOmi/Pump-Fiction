@@ -8,7 +8,6 @@ from ..schemas.routine_schema import (
     RoutineHeaderCreate,
     RoutineHeaderUpdate,
     RoutineHeaderResponse,
-    RoutineHeaderListResponse,
 )
 
 
@@ -16,27 +15,29 @@ class RoutineService:
     def __init__(self, db: Session):
         self.repository = RoutineRepository(db)
 
-    def get_all_routines(self, user_id: UUID, include_archived: bool = False) -> List[RoutineHeaderListResponse]:
+    def get_all_routines(self, user_id: UUID, include_archived: bool = False) -> List[RoutineHeaderResponse]:
         """Get all routines for a user."""
+        print(f"🔍 Service: Getting routines for user {user_id}, include_archived={include_archived}")
+        
         if include_archived:
             routines = self.repository.get_all_routines_including_archived(user_id)
         else:
             routines = self.repository.get_all_routines(user_id)
 
-        # Convert to list response (without exercises for performance)
-        return [
-            RoutineHeaderListResponse(
-                id=routine.id,
-                user_id=routine.user_id,
-                title=routine.title,
-                day_selected=routine.day_selected,
-                is_archived=routine.is_archived,
-                exercise_count=len(routine.exercises),
-                created_at=routine.created_at,
-                updated_at=routine.updated_at,
-            )
+        print(f"📦 Service: Found {len(routines)} routines")
+        for routine in routines:
+            print(f"   - {routine.title}: {len(routine.exercises)} exercises")
+            for ex in routine.exercises[:3]:  # Show first 3 exercises
+                print(f"      • {ex.title} - {ex.sets} sets")
+
+        # Convert to full response WITH exercises
+        result = [
+            RoutineHeaderResponse.model_validate(routine)
             for routine in routines
         ]
+        
+        print(f"✅ Service: Returning {len(result)} routines with exercises")
+        return result
 
     def get_routine_by_id(self, routine_id: UUID, user_id: UUID) -> RoutineHeaderResponse:
         """Get a specific routine with all its exercises."""

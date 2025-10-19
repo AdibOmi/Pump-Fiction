@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import SQLAlchemyError
 from typing import List, Optional
 from uuid import UUID
@@ -19,6 +19,7 @@ class RoutineRepository:
         """Get all routines for a user (non-archived only by default)."""
         return (
             self.db.query(RoutineHeader)
+            .options(joinedload(RoutineHeader.exercises))
             .filter(RoutineHeader.user_id == user_id, RoutineHeader.is_archived == False)
             .order_by(RoutineHeader.created_at.desc())
             .all()
@@ -28,6 +29,7 @@ class RoutineRepository:
         """Get all routines for a user including archived ones."""
         return (
             self.db.query(RoutineHeader)
+            .options(joinedload(RoutineHeader.exercises))
             .filter(RoutineHeader.user_id == user_id)
             .order_by(RoutineHeader.created_at.desc())
             .all()
@@ -37,6 +39,7 @@ class RoutineRepository:
         """Get a specific routine by ID, ensuring it belongs to the user."""
         return (
             self.db.query(RoutineHeader)
+            .options(joinedload(RoutineHeader.exercises))
             .filter(RoutineHeader.id == routine_id, RoutineHeader.user_id == user_id)
             .first()
         )
@@ -50,7 +53,7 @@ class RoutineRepository:
             print(f"  Day selected: {routine_data.day_selected}")
             print(f"  Exercises count: {len(routine_data.exercises)}")
             for i, ex in enumerate(routine_data.exercises):
-                print(f"    Exercise {i}: {ex.title} - {ex.sets} sets, {ex.min_reps}-{ex.max_reps} reps, position {ex.position}")
+                print(f"    Exercise {i}: {ex.title} - {ex.sets} sets, {ex.min_reps}-{ex.max_reps} reps, position {ex.position}, day: {ex.day_label}")
 
             # Create the routine header
             routine = RoutineHeader(
@@ -72,11 +75,13 @@ class RoutineRepository:
                     min_reps=exercise_data.min_reps,
                     max_reps=exercise_data.max_reps,
                     position=exercise_data.position,
+                    day_label=exercise_data.day_label,  # NEW: Save day_label!
                 )
                 self.db.add(exercise)
 
             self.db.commit()
             self.db.refresh(routine)
+            print(f"✅ Routine created with {len(routine.exercises)} exercises")
             return routine
         except SQLAlchemyError as e:
             self.db.rollback()
@@ -103,17 +108,18 @@ class RoutineRepository:
                     RoutineExercise.routine_id == routine_id
                 ).delete()
 
-                # Add new exercises
-                for exercise_data in routine_data.exercises:
-                    exercise = RoutineExercise(
-                        routine_id=routine.id,
-                        title=exercise_data.title,
-                        sets=exercise_data.sets,
-                        min_reps=exercise_data.min_reps,
-                        max_reps=exercise_data.max_reps,
-                        position=exercise_data.position,
-                    )
-                    self.db.add(exercise)
+            # Add new exercises
+            for exercise_data in routine_data.exercises:
+                exercise = RoutineExercise(
+                    routine_id=routine.id,
+                    title=exercise_data.title,
+                    sets=exercise_data.sets,
+                    min_reps=exercise_data.min_reps,
+                    max_reps=exercise_data.max_reps,
+                    position=exercise_data.position,
+                    day_label=exercise_data.day_label,  # NEW: Save day_label!
+                )
+                self.db.add(exercise)
 
             self.db.commit()
             self.db.refresh(routine)

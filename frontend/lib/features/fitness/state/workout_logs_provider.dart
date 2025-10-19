@@ -31,6 +31,18 @@ class LoggedSet {
         reps: (json['reps'] as num).toInt(),
       );
 
+  // Backend JSON conversion (with position)
+  Map<String, dynamic> toBackendJson(int position) => {
+        'weight': weight,
+        'reps': reps,
+        'position': position,
+      };
+
+  factory LoggedSet.fromBackendJson(Map<String, dynamic> json) => LoggedSet(
+        weight: (json['weight'] as num).toDouble(),
+        reps: (json['reps'] as num).toInt(),
+      );
+
   @override
   String toString() => 'LoggedSet(weight: $weight, reps: $reps)';
 }
@@ -65,6 +77,25 @@ class LoggedExercise {
         sets: (json['sets'] as List)
             .map((e) => LoggedSet.fromJson(e as Map<String, dynamic>))
             .toList(),
+      );
+
+  // Backend JSON conversion (with position)
+  Map<String, dynamic> toBackendJson(int position) => {
+        'exercise_name': name,
+        'position': position,
+        'sets': sets
+            .asMap()
+            .entries
+            .map((entry) => entry.value.toBackendJson(entry.key))
+            .toList(),
+      };
+
+  factory LoggedExercise.fromBackendJson(Map<String, dynamic> json) => LoggedExercise(
+        name: (json['exercise_name'] as String).trim(),
+        sets: (json['sets'] as List<dynamic>?)
+                ?.map((e) => LoggedSet.fromBackendJson(e as Map<String, dynamic>))
+                .toList() ??
+            [],
       );
 
   @override
@@ -115,6 +146,29 @@ class WorkoutLog {
         exercises: (json['exercises'] as List)
             .map((e) => LoggedExercise.fromJson(e as Map<String, dynamic>))
             .toList(),
+      );
+
+  // Backend JSON conversion
+  Map<String, dynamic> toBackendJson() => {
+        'workout_date': date.toIso8601String().split('T')[0], // YYYY-MM-DD
+        'routine_title': routineTitle,
+        'day_label': dayLabel,
+        'exercises': exercises
+            .asMap()
+            .entries
+            .map((entry) => entry.value.toBackendJson(entry.key))
+            .toList(),
+      };
+
+  factory WorkoutLog.fromBackendJson(Map<String, dynamic> json) => WorkoutLog(
+        id: json['id']?.toString() ?? _makeId(DateTime.parse(json['workout_date'] as String)),
+        date: DateTime.parse(json['workout_date'] as String),
+        routineTitle: json['routine_title'] as String?,
+        dayLabel: json['day_label'] as String?,
+        exercises: (json['exercises'] as List<dynamic>?)
+                ?.map((e) => LoggedExercise.fromBackendJson(e as Map<String, dynamic>))
+                .toList() ??
+            [],
       );
 
   static String encodeList(List<WorkoutLog> logs) =>

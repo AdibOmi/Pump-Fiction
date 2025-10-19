@@ -14,10 +14,16 @@ class RoutinesNotifier extends StateNotifier<List<RoutinePlan>> {
   // ----- Load routines from backend -----
   Future<void> _load() async {
     try {
+      print('🔄 RoutinesNotifier: Loading routines from backend...');
       final routines = await _repository.getAllRoutines(includeArchived: false);
+      print('✅ RoutinesNotifier: Loaded ${routines.length} routines');
+      for (var routine in routines) {
+        print('   - ${routine.title}: ${routine.dayPlans.length} days, ${routine.dayPlans.first.exercises.length} exercises');
+      }
       state = routines;
+      print('✅ RoutinesNotifier: State updated with ${state.length} routines');
     } catch (e) {
-      print('Error loading routines: $e');
+      print('❌ Error loading routines: $e');
       // Keep empty state on error
     }
   }
