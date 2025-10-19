@@ -3,7 +3,8 @@
     "allow": [
       "Bash(python -m uvicorn app.main:app --reload --port 8000)",
       "Bash(python test_routine_query.py:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(curl -X GET \"http://127.0.0.1:8000/users/me/profile\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6ImVvSko3dU5ZTnplZE9FMUciLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL251dmpqa3Zjamxkcm14c2JraWJwLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJlYzgyN2NiNS1iZmNiLTRiODMtOWQ4ZC1kNjQzYjNhN2ZhMDQiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzYwODQ5MTMwLCJpYXQiOjE3NjA4NDU1MzAsImVtYWlsIjoiY2FwYWJsZW1hbm40ZHdpbkBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoiY2FwYWJsZW1hbm40ZHdpbkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZnVsbF9uYW1lIjoiQWhtZWQgU2hhZmluIFJ1aGFuIiwicGhvbmVfbnVtYmVyIjoiMDAwMDAwIiwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJyb2xlIjoibm9ybWFsX3VzZXIiLCJzdWIiOiJlYzgyN2NiNS1iZmNiLTRiODMtOWQ4ZC1kNjQzYjNhN2ZhMDQifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc2MDg0NTUzMH1dLCJzZXNzaW9uX2lkIjoiYzZlZGE0OWMtNzgxZC00YmM5LTljMDItNGUwMTY0OWZmNDYxIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.6ECMrTDrT16XfvXtn_HrCdR0rDl4y4TPN3hhNFXvSOk\" -H \"Content-Type: application/json\" -v)"
     ],
     "deny": [],
     "ask": []

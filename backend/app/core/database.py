@@ -5,6 +5,7 @@ from .config import settings
 import re
 
 # Async engine and session for async operations (for parts of the app that use async ORM)
+# Using Session Mode pooler - supports prepared statements and connection pooling
 async_engine = create_async_engine(settings.DATABASE_URL, echo=True)
 AsyncSessionLocal = sessionmaker(async_engine, expire_on_commit=False, class_=AsyncSession)
 
